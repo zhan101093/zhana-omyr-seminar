@@ -162,13 +162,13 @@
     .p3-header p { color:rgba(60,20,80,.58); font-size:.9rem; font-weight:300; }
 
     .p3-layout {
-      display:flex; gap:48px; align-items:flex-start;
-      justify-content:center; width:100%; max-width:820px; flex-wrap:wrap;
+      display:flex; flex-direction:row; gap:40px; align-items:flex-start;
+      justify-content:center; width:100%; max-width:960px; flex-wrap:wrap;
     }
 
-    /* Sticker grid */
+    /* Sticker grid — desktop: 5 col, mobile: 3 col */
     #stickersGrid {
-      display:grid; grid-template-columns:repeat(4,140px); gap:18px;
+      display:grid; grid-template-columns:repeat(5,130px); gap:14px;
     }
 
     .sticker {
@@ -201,43 +201,67 @@
 
     /* Trash zone */
     .trash-zone {
-      display:flex; flex-direction:column; align-items:center; gap:14px;
-      padding:28px 32px 24px;
-      border-radius:24px;
-      border:3px dashed rgba(0,0,0,0.15);
-      background: rgba(255,255,255,0.5);
+      display:flex; flex-direction:column; align-items:center; gap:12px;
+      padding:16px 20px 20px;
+      border-radius:20px;
+      border:3px dashed rgba(0,0,0,0.13);
+      background: rgba(255,255,255,0.55);
       backdrop-filter: blur(8px);
       transition: all .22s ease;
-      min-width: 180px;
+      min-width:200px;
     }
     .trash-zone.drag-over {
       border-color: #FF2D95;
       background: rgba(255,45,149,0.07);
-      transform: scale(1.06);
       box-shadow: 0 0 40px rgba(255,45,149,0.25);
     }
-    .trash-can {
-      font-size:7.5rem; line-height:1;
-      filter:drop-shadow(0 8px 20px rgba(0,0,0,.22));
-      transition:transform .2s, filter .2s;
-      cursor:default; user-select:none;
+
+    /* Basket container */
+    .trash-container {
+      position: relative;
+      width: 170px; height: 204px;
+      transition: transform .22s ease;
     }
-    .trash-zone.drag-over .trash-can {
-      transform: scale(1.18);
-      filter: drop-shadow(0 8px 24px rgba(255,45,149,.5));
-    }
-    .trash-can.shake { animation:trashShake .45s ease; }
+    .trash-zone.drag-over .trash-container { transform: scale(1.06); }
+    .trash-container.shake { animation: trashShake .45s ease; }
     @keyframes trashShake {
-      0%,100%{transform:rotate(0) scale(1);}
-      20%{transform:rotate(-14deg) scale(1.15);}
-      40%{transform:rotate(14deg) scale(1.15);}
-      60%{transform:rotate(-8deg) scale(1.06);}
-      80%{transform:rotate(8deg) scale(1.06);}
+      0%,100%{ transform:rotate(0) scale(1); }
+      20%{ transform:rotate(-12deg) scale(1.1); }
+      40%{ transform:rotate(12deg) scale(1.1); }
+      60%{ transform:rotate(-6deg); }
+      80%{ transform:rotate(6deg); }
     }
+
+    /* Sticker chips pile inside basket */
+    .trash-inside {
+      position: absolute;
+      top: 44px; bottom: 18px;
+      left: 14px; right: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-end;
+      gap: 3px;
+      padding: 4px;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* SVG basket on top */
+    .basket-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .trash-zone.drag-over .basket-svg {
+      filter: drop-shadow(0 0 16px rgba(255,45,149,.55));
+    }
+
     .trash-label {
       font-size:.82rem; font-weight:600;
       color:rgba(60,20,80,.5); text-align:center;
-      max-width:140px; line-height:1.45;
+      line-height:1.4;
     }
     .trash-zone.drag-over .trash-label { color:#CC0060; }
 
@@ -274,10 +298,9 @@
 
       /* Page 3 */
       .p3-header h2      { font-size:2.8rem; }
-      #stickersGrid      { grid-template-columns:repeat(4,150px); gap:20px; }
-      .sticker           { width:150px; height:150px; font-size:.85rem; }
-      .trash-zone        { min-width:200px; padding:32px 36px 28px; }
-      .trash-can         { font-size:9rem; }
+      #stickersGrid      { grid-template-columns:repeat(5,130px); gap:14px; }
+      .sticker           { width:130px; height:130px; }
+      .trash-container   { width:170px; height:204px; }
     }
 
     /* ══ Desktop — lg (≥1200px) ══ */
@@ -291,23 +314,26 @@
       .wheel-wrap        { max-width:640px; }
       .results-header h1 { font-size:3rem; }
       .p2-right          { max-width:420px; }
-      #stickersGrid      { grid-template-columns:repeat(5,150px); }
+      #stickersGrid      { grid-template-columns:repeat(5,140px); gap:16px; }
+      .sticker           { width:140px; height:140px; }
+      .trash-container   { width:190px; height:228px; }
+      .trash-inside      { top:50px; bottom:20px; left:16px; right:16px; }
       .p3-header h2      { font-size:3.2rem; }
-      .trash-can         { font-size:10rem; }
     }
 
     /* ══ Mobile ══ */
     @media(max-width:700px) {
-      .p3-layout   { flex-direction:column; align-items:center; gap:24px; }
-      #stickersGrid { grid-template-columns:repeat(3,115px); gap:10px; }
-      .sticker      { width:115px; height:115px; padding:26px 9px 9px; }
-      .trash-zone   { flex-direction:row; gap:16px; padding:16px 24px; min-width:unset; width:100%; max-width:340px; justify-content:center; }
-      .trash-can    { font-size:4rem; }
+      .p3-layout    { flex-direction:column; align-items:center; gap:20px; }
+      #stickersGrid { grid-template-columns:repeat(3,110px); gap:10px; }
+      .sticker      { width:110px; height:110px; padding:26px 9px 9px; }
+      .trash-zone   { padding:14px 20px 16px; }
+      .trash-container { width:150px; height:180px; }
+      .trash-inside { top:38px; bottom:16px; left:12px; right:12px; }
     }
     @media(max-width:420px) {
       .form-header h1 { font-size:2.2rem; }
-      #stickersGrid   { grid-template-columns:repeat(3,105px); gap:8px; }
-      .sticker        { width:105px; height:105px; padding:24px 8px 8px; }
+      #stickersGrid   { grid-template-columns:repeat(3,98px); gap:8px; }
+      .sticker        { width:98px; height:98px; padding:24px 8px 8px; }
     }
   </style>
 </head>
@@ -321,9 +347,9 @@
 <div id="page1" class="page active">
   <header class="form-header">
     <div class="badge">✨ Өзіңізді тану &nbsp;·&nbsp; Өсу &nbsp;·&nbsp; Баланс</div>
-    <h1>Өмір балансы<br>дөңгелегі</h1>
+    <h1 id="mainTitle">Өмір балансы дөңгелегі</h1>
     <div class="divider"></div>
-    <p>Әрбір саладағы деңгейіңізді<br>1-ден 10-ға дейін бағалаңыз</p>
+    <p id="mainSubtitle">Әрбір саладағы деңгейіңізді 1-ден 10-ға дейін бағалаңыз</p>
   </header>
   <div class="form-container" id="formContainer"></div>
   <div class="submit-area">
@@ -368,9 +394,35 @@
       <!-- JS арқылы толтырылады -->
     </div>
 
-    <div class="trash-zone">
-      <div class="trash-can" id="trashCan">🗑️</div>
-      <div class="trash-label">Мұнда лақтырыңыз</div>
+    <div class="trash-zone" id="trashZone">
+      <div class="trash-container" id="trashCan">
+        <!-- sticker chips pile here, behind the basket SVG -->
+        <div class="trash-inside" id="trashInside"></div>
+        <!-- wire basket SVG — front layer -->
+        <svg class="basket-svg" viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="wm" x="0" y="0" width="38" height="38" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="38" x2="38" y2="0" stroke="#1a1a1a" stroke-width="3.2"/>
+              <line x1="0" y1="0" x2="38" y2="38" stroke="#1a1a1a" stroke-width="3.2"/>
+            </pattern>
+            <clipPath id="bc">
+              <rect x="17" y="48" width="166" height="164"/>
+            </clipPath>
+          </defs>
+          <!-- Mesh fill clipped to basket body -->
+          <rect x="0" y="0" width="200" height="250" fill="url(#wm)" clip-path="url(#bc)"/>
+          <!-- Side outlines -->
+          <line x1="17" y1="48" x2="17" y2="212" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"/>
+          <line x1="183" y1="48" x2="183" y2="212" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"/>
+          <!-- Bottom ellipse -->
+          <ellipse cx="100" cy="212" rx="83" ry="17" stroke="#1a1a1a" stroke-width="5"/>
+          <!-- Rim: white-filled ellipse (hides sticker tops = "inside" illusion) -->
+          <ellipse cx="100" cy="48" rx="86" ry="23" fill="white" stroke="#1a1a1a" stroke-width="7"/>
+          <!-- Rim inner shadow line -->
+          <ellipse cx="100" cy="51" rx="75" ry="16" stroke="#1a1a1a" stroke-width="3.5" fill="none" stroke-dasharray="0"/>
+        </svg>
+      </div>
+      <div class="trash-label">Мұнда сүйреп тастаңыз</div>
     </div>
 
   </div>
@@ -415,6 +467,8 @@ const STICKER_DATA = [
   { text: 'Болашақ үшін шамадан тыс алаңдау',             color: '#B8F0E8' },
   { text: 'Өзімді үнемі кінәлау',                         color: '#FFC8E8' },
   { text: 'Өзімді басқалармен салыстыру',                 color: '#E8FFB8' },
+  { text: 'Кеш ұйықтау',                                  color: '#FFD6FF' },
+  { text: 'Адамдарға рахмет айта алмау',                  color: '#D6EEFF' },
 ];
 
 const scores = new Array(CATS.length).fill(1);
@@ -522,6 +576,8 @@ let dragOX = 0, dragOY = 0; // offset inside sticker
 function buildStickers() {
   const grid = document.getElementById('stickersGrid');
   grid.innerHTML = '';
+  const inside = document.getElementById('trashInside');
+  if (inside) inside.innerHTML = '';
   document.getElementById('doneMsg').style.display = 'none';
   grid.style.display = 'grid';
 
@@ -648,30 +704,20 @@ function onDragEnd(e) {
   }
 }
 
-/* show tiny sticker inside trash zone */
+/* add tiny sticker chip inside basket */
 function addTrashThumb(color, text) {
-  let pile = document.getElementById('trashPile');
-  if (!pile) {
-    pile = document.createElement('div');
-    pile.id = 'trashPile';
-    Object.assign(pile.style, {
-      display:'flex', flexWrap:'wrap', gap:'4px',
-      maxWidth:'140px', justifyContent:'center', marginTop:'8px',
-    });
-    document.getElementById('trashZone').appendChild(pile);
-  }
+  const inside = document.getElementById('trashInside');
+  if (!inside) return;
   const chip = document.createElement('div');
   Object.assign(chip.style, {
     background: color,
     borderRadius: '3px',
-    width: '22px', height: '22px',
-    boxShadow: '1px 2px 4px rgba(0,0,0,.18)',
+    width: '26px', height: '26px',
     flexShrink: '0',
-    transform: `rotate(${(Math.random()*10-5).toFixed(1)}deg)`,
-    transition: 'transform .2s',
+    transform: `rotate(${(Math.random()*14-7).toFixed(1)}deg)`,
   });
   chip.title = text;
-  pile.appendChild(chip);
+  inside.appendChild(chip);
 }
 
 function checkAllGone() {
