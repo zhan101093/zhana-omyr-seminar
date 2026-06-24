@@ -131,7 +131,9 @@
     .wheel-wrap { width:100%; max-width:460px; }
     #wheelCanvas { width:100%; height:auto; display:block; }
 
-    .p2-actions { display:flex; gap:12px; margin-top:auto; padding-top:28px; flex-wrap:wrap; justify-content:center; }
+    /* wheel + buttons column */
+    .p2-wheel-col { display:flex; flex-direction:column; align-items:center; width:100%; }
+    .p2-actions   { display:flex; gap:12px; margin-top:20px; flex-wrap:wrap; justify-content:center; }
 
     .btn-secondary {
       background:rgba(0,0,0,.04); color:#3a1a50;
@@ -427,7 +429,8 @@
       /* Page 2 — wheel left, text right */
       #page2              { justify-content:center; }
       .p2-inner           { flex-direction:row; align-items:center; gap:52px; }
-      .wheel-wrap         { max-width:540px; flex-shrink:0; order:1; }
+      .p2-wheel-col       { max-width:540px; flex-shrink:0; order:1; }
+      .wheel-wrap         { max-width:540px; }
       .p2-right           { align-items:flex-start; max-width:360px; order:2; }
       .results-header     { text-align:left; margin-bottom:0; }
       .results-header h1  { font-size:2.6rem; }
@@ -480,7 +483,7 @@
 <!-- ══════════ PAGE 2 — WHEEL ══════════ -->
 <div id="page2" class="page">
   <div class="p2-inner">
-    <!-- mobile: header first (top), desktop: goes right via CSS order -->
+    <!-- mobile: header first, desktop: right side -->
     <div class="p2-right">
       <header class="results-header">
         <div class="badge">💖 Сіздің Өмір Балансыңыз</div>
@@ -488,14 +491,17 @@
         <div class="divider" style="margin:0 0 14px"></div>
         <p>Сіздің өмір балансыңыздың бейнесі</p>
       </header>
+    </div>
+    <!-- wheel + buttons always together, buttons below wheel -->
+    <div class="p2-wheel-col">
+      <div class="wheel-wrap">
+        <canvas id="wheelCanvas" width="500" height="500"
+          role="img" aria-label="Өмір балансы дөңгелегі диаграммасы"></canvas>
+      </div>
       <div class="p2-actions">
         <button type="button" class="btn-secondary" onclick="retake()">← Қайтадан бағалау</button>
         <button type="button" class="btn-primary" onclick="goToStickers()">Әрі қарай &rarr;</button>
       </div>
-    </div>
-    <div class="wheel-wrap">
-      <canvas id="wheelCanvas" width="500" height="500"
-        role="img" aria-label="Өмір балансы дөңгелегі диаграммасы"></canvas>
     </div>
   </div>
 </div>
