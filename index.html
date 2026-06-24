@@ -96,6 +96,7 @@
       color: #CC0060;
       letter-spacing: .6px;
       margin-bottom: 18px;
+      white-space: nowrap;
     }
 
     .form-header { text-align: center; margin-bottom: 38px; }
@@ -120,7 +121,7 @@
       box-shadow: 0 0 12px #FF2D9580;
     }
 
-    .form-header p { color: var(--text-muted); font-size: .9rem; font-weight: 300; }
+    .form-header p { color: var(--text-muted); font-size: .9rem; font-weight: 300; white-space: nowrap; }
 
     /* Cards */
     .form-container { width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 10px; }
@@ -356,7 +357,6 @@
   </div>
 
   <div class="avg-box" id="avgBox"></div>
-  <div class="legend" id="legend"></div>
   <button type="button" class="btn-secondary" onclick="retake()">← Қайтадан бағалау</button>
 
 </div>
@@ -364,16 +364,16 @@
 <script>
 const CATS = [
   { name: 'Алламен байланысыңыз',                    short: 'Алла',     icon: '🤲', color: '#FFD700' },
-  { name: 'Денсаулығыңыз',                            short: 'Денсаулық', icon: '🌿', color: '#00F5A0' },
+  { name: 'Денсаулығыңыз',                            short: 'Денсаулық', icon: '🏋️', color: '#00F5A0' },
   { name: 'Күйеуіңізбен қарым-қатынасыңыз',          short: 'Күйеу',    icon: '💑', color: '#FF2D95' },
   { name: 'Балаларыңызбен қарым-қатынасыңыз',        short: 'Балалар',  icon: '👨‍👩‍👧', color: '#BB6BFF' },
-  { name: 'Қаржылық жағдайыңыз',                     short: 'Қаржы',    icon: '💎', color: '#FF7B3D' },
+  { name: 'Қаржылық жағдайыңыз',                     short: 'Қаржы',    icon: '💵', color: '#FF7B3D' },
   { name: 'Әлеуметтік ортадағы орныңыз',             short: 'Әлеует',   icon: '🤝', color: '#FF00CC' },
-  { name: 'Уақытылы демалу көрсеткішіңіз',           short: 'Демалыс',  icon: '🌙', color: '#00D4FF' },
-  { name: 'Өзіңізбен жұмыс жасап, даму деңгейіңіз', short: 'Даму',     icon: '🌸', color: '#FF4D6D' },
+  { name: 'Уақытылы демалу көрсеткішіңіз',           short: 'Демалыс',  icon: '⛰️', color: '#00D4FF' },
+  { name: 'Өзіңізбен жұмыс жасап, даму деңгейіңіз', short: 'Даму',     icon: '📈', color: '#FF4D6D' },
 ];
 
-const scores = new Array(CATS.length).fill(5);
+const scores = new Array(CATS.length).fill(1);
 
 /* Per-slider thumb colours */
 (function () {
@@ -402,11 +402,11 @@ function buildForm() {
           </div>
           <span class="card-name">${cat.name}</span>
         </div>
-        <span class="card-val" id="val-${i}" style="color:${cat.color};text-shadow:0 0 18px ${cat.color}80">5</span>
+        <span class="card-val" id="val-${i}" style="color:${cat.color};text-shadow:0 0 18px ${cat.color}80">1</span>
       </div>
-      <input type="range" id="sl-${i}" min="1" max="10" value="5"
+      <input type="range" id="sl-${i}" min="1" max="10" value="1"
         aria-label="${cat.name} бойынша баға"
-        style="background:linear-gradient(to right,${cat.color} ${pct(5)},rgba(0,0,0,0.10) ${pct(5)})"
+        style="background:linear-gradient(to right,${cat.color} ${pct(1)},rgba(0,0,0,0.10) ${pct(1)})"
         oninput="onSlider(${i},this)">
       <div class="scale-marks" aria-hidden="true">
         ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<span>${n}</span>`).join('')}
@@ -435,16 +435,6 @@ function showResults() {
     <div class="avg-num">${avg} / 10</div>
     <div class="avg-label">Орташа баланс ұпайы</div>
   `;
-
-  document.getElementById('legend').innerHTML = CATS.map((c, i) => `
-    <div class="leg-item" style="border-left:3px solid ${c.color}">
-      <div class="leg-dot" style="background:${c.color};box-shadow:0 0 10px ${c.color}"></div>
-      <div class="leg-info">
-        <div class="leg-name">${c.icon} ${c.name}</div>
-        <div class="leg-score" style="color:${c.color}">${scores[i]} / 10</div>
-      </div>
-    </div>
-  `).join('');
 
   setTimeout(drawWheel, 80);
 }
