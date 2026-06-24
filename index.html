@@ -121,7 +121,7 @@
       box-shadow: 0 0 12px #FF2D9580;
     }
 
-    .form-header p { color: var(--text-muted); font-size: .9rem; font-weight: 300; white-space: nowrap; }
+    .form-header p { color: var(--text-muted); font-size: .9rem; font-weight: 300; line-height: 1.7; }
 
     /* Cards */
     .form-container { width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 10px; }
@@ -153,7 +153,7 @@
       border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.2rem; flex-shrink: 0;
-      border: 1px solid rgba(0,0,0,0.10);
+      border: 1px solid rgba(255,160,200,0.30);
     }
 
     .card-name {
@@ -203,9 +203,13 @@
 
     .scale-marks {
       display: flex; justify-content: space-between;
-      margin-top: 6px; padding: 0 1px;
+      margin-top: 7px; padding: 0 2px;
     }
-    .scale-marks span { font-size: .62rem; color: var(--text-subtle); }
+    .scale-marks span {
+      font-size: .72rem;
+      font-weight: 600;
+      color: rgba(100,40,120,0.55);
+    }
 
     /* Submit */
     .submit-area { margin-top: 28px; text-align: center; }
@@ -328,7 +332,7 @@
     <div class="badge">✨ Өзіңізді тану &nbsp;·&nbsp; Өсу &nbsp;·&nbsp; Баланс</div>
     <h1>Өмір Балансы<br>Дөңгелегі</h1>
     <div class="divider"></div>
-    <p>Әрбір саладағы деңгейіңізді 1-ден 10-ға дейін бағалаңыз</p>
+    <p>Әрбір саладағы деңгейіңізді<br>1-ден 10-ға дейін бағалаңыз</p>
   </header>
 
   <div class="form-container" id="formContainer"></div>
@@ -406,7 +410,7 @@ function buildForm() {
       </div>
       <input type="range" id="sl-${i}" min="1" max="10" value="1"
         aria-label="${cat.name} бойынша баға"
-        style="background:linear-gradient(to right,${cat.color} ${pct(1)},rgba(0,0,0,0.10) ${pct(1)})"
+        style="background:linear-gradient(to right,${cat.color} ${pct(1)},rgba(255,160,200,0.30) ${pct(1)})"
         oninput="onSlider(${i},this)">
       <div class="scale-marks" aria-hidden="true">
         ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<span>${n}</span>`).join('')}
@@ -422,7 +426,7 @@ function onSlider(i, el) {
   const valEl = document.getElementById(`val-${i}`);
   valEl.textContent = v;
   el.style.background =
-    `linear-gradient(to right,${CATS[i].color} ${pct(v)},rgba(0,0,0,0.10) ${pct(v)})`;
+    `linear-gradient(to right,${CATS[i].color} ${pct(v)},rgba(255,160,200,0.30) ${pct(v)})`;
 }
 
 function showResults() {
@@ -498,7 +502,7 @@ function drawWheel() {
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(cx + maxR * Math.cos(a), cy + maxR * Math.sin(a));
-      ctx.strokeStyle = 'rgba(0,0,0,0.10)';
+      ctx.strokeStyle = 'rgba(255,160,200,0.30)';
       ctx.lineWidth = 1;
       ctx.stroke();
     }
