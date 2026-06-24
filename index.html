@@ -160,7 +160,7 @@
 
     /* Sticker grid */
     #stickersGrid {
-      display:grid; grid-template-columns:repeat(3,140px); gap:18px;
+      display:grid; grid-template-columns:repeat(4,140px); gap:18px;
     }
 
     .sticker {
@@ -237,7 +237,7 @@
 
     .p3-back { margin-top:32px; }
 
-    @media(max-width:560px) {
+    @media(max-width:700px) {
       #stickersGrid { grid-template-columns:repeat(2,140px); }
       .p3-layout { gap:28px; }
       .form-header h1 { font-size:2.2rem; }
@@ -330,17 +330,20 @@ const CATS = [
   { name:'Өзіңізбен жұмыс жасап, даму деңгейіңіз', short:'Даму',      icon:'📈', color:'#FF4D6D' },
 ];
 
-/* Sticker data — мәтінді кейін ауыстырыңыз */
 const STICKER_DATA = [
-  { text: 'Стиккер 1', color: '#FFE566' },
-  { text: 'Стиккер 2', color: '#FF9CC2' },
-  { text: 'Стиккер 3', color: '#7ED8F6' },
-  { text: 'Стиккер 4', color: '#7EF5C2' },
-  { text: 'Стиккер 5', color: '#D4A0FF' },
-  { text: 'Стиккер 6', color: '#FFBE8A' },
-  { text: 'Стиккер 7', color: '#FF9494' },
-  { text: 'Стиккер 8', color: '#A0E8A0' },
-  { text: 'Стиккер 9', color: '#C8C8FF' },
+  { text: 'Көмек сұраудан ұялу',                          color: '#FFE566' },
+  { text: 'Құлшылықты кейінге қалдыру',                   color: '#FF9CC2' },
+  { text: 'Өз пікірімді айтудан қорқу',                   color: '#7ED8F6' },
+  { text: 'Ренішті іште сақтау',                          color: '#7EF5C2' },
+  { text: 'Адамдарға ұнауға тырысу',                      color: '#D4A0FF' },
+  { text: '«Жоқ» деп айта алмау',                         color: '#FFBE8A' },
+  { text: 'Өз қажеттіліктерімді елемеу',                  color: '#FF9494' },
+  { text: 'Барлық жауапкершілікті өз мойныма алу',        color: '#A0E8A0' },
+  { text: 'Өзіме уақыт бөлмеу',                           color: '#C8C8FF' },
+  { text: 'Телефонға тәуелділік',                         color: '#FFD4B8' },
+  { text: 'Болашақ үшін шамадан тыс алаңдау',             color: '#B8F0E8' },
+  { text: 'Өзімді үнемі кінәлау',                         color: '#FFC8E8' },
+  { text: 'Өзімді басқалармен салыстыру',                 color: '#E8FFB8' },
 ];
 
 const scores = new Array(CATS.length).fill(1);
