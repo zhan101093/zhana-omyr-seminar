@@ -383,27 +383,25 @@
     }
     .ground-leaf .lf-text {
       position:relative; z-index:1;
-      font-size:.72rem; font-weight:800;
-      color:#1a4a10; text-align:center;
-      line-height:1.3; padding:12px 14px;
+      font-size:.72rem; font-weight:700;
+      color:#fff; text-align:center;
+      line-height:1.35; padding:12px 14px;
       max-width:140px;
       word-break:keep-all;
       overflow-wrap:normal;
       hyphens:none;
-      text-shadow:0 0 6px rgba(255,255,255,.7);
+      text-shadow: 0 1px 4px rgba(0,0,0,.7), 0 0 10px rgba(0,0,0,.4);
     }
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf — white bg blocks green tree from showing through transparent areas */
+    /* Placed leaf — no background, keeps original leaf look */
     .placed-leaf {
       position:absolute;
       width:140px; height:95px;
       display:flex; align-items:center; justify-content:center;
       animation:leafLand .5s cubic-bezier(.34,1.56,.64,1);
       pointer-events:none;
-      background:rgba(255,255,255,0.92);
-      border-radius:50% 6% 50% 6% / 40% 6% 40% 6%;
     }
     .placed-leaf img {
       position:absolute; inset:0;
@@ -413,14 +411,14 @@
     }
     .placed-leaf .lf-text {
       position:relative; z-index:1;
-      font-size:.68rem; font-weight:800;
-      color:#0a3008; text-align:center;
-      line-height:1.3; padding:8px 10px;
-      max-width:120px;
+      font-size:.68rem; font-weight:700;
+      color:#fff; text-align:center;
+      line-height:1.35; padding:8px 10px;
+      max-width:128px;
       word-break:keep-all;
       overflow-wrap:normal;
       hyphens:none;
-      text-shadow:0 0 4px rgba(255,255,255,.6);
+      text-shadow: 0 1px 4px rgba(0,0,0,.7), 0 0 10px rgba(0,0,0,.4);
     }
 
     .p4-back { margin-top:28px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
@@ -486,21 +484,22 @@
     .letter-area {
       width:100%; max-width:580px;
       min-height:55vh;
-      background:rgba(255,255,255,0.18);
-      border:1.5px solid rgba(255,160,210,0.35);
+      background:rgba(255,255,255,0.15);
+      border:1.5px solid rgba(255,160,210,0.3);
       border-radius:16px;
       backdrop-filter:blur(4px);
-      padding:24px 24px;
-      font-family:'DM Sans',sans-serif;
-      font-size:1rem; line-height:1.85;
-      color:#1a0820;
+      padding:24px 28px;
+      font-family:'Cormorant Garamond',serif;
+      font-style:italic;
+      font-size:1.15rem; line-height:1.9;
+      color:rgba(120,60,140,0.85);
       resize:vertical; outline:none;
       transition:border-color .2s, background .2s;
     }
-    .letter-area::placeholder { color:rgba(60,20,80,0.45); font-style:italic; }
+    .letter-area::placeholder { color:rgba(120,60,140,0.4); font-style:italic; }
     .letter-area:focus {
-      border-color:rgba(255,45,149,0.5);
-      background:rgba(255,255,255,0.28);
+      border-color:rgba(255,45,149,0.4);
+      background:rgba(255,255,255,0.22);
     }
     .p4-letter-actions {
       display:flex; gap:14px; margin-top:20px; flex-wrap:wrap; justify-content:center;
@@ -653,7 +652,7 @@
 <!-- ══════════ PAGE 4 — LETTER ══════════ -->
 <div id="page4" class="page page4-letter">
   <!-- full-page letter background -->
-  <img id="letterImg" src="5323426833581676495.jpg" alt="" class="letter-bg-img">
+  <img id="letterImg" src="5323426833581676523.jpg" alt="" class="letter-bg-img">
 
   <!-- content floats on top -->
   <div class="letter-content">
@@ -1104,10 +1103,7 @@ async function buildLeaves() {
   ]);
   const imgMap = { 'list1.jpg': src1, 'list2.jpg': src2 };
 
-  /* check if right panel is actually visible */
-  const rightPanel = document.querySelector('.ground-right');
-  const rightVisible = rightEl && rightPanel &&
-    getComputedStyle(rightPanel).display !== 'none';
+  /* always split: first 6 → left, last 6 → right (CSS hides right on mobile) */
 
   LEAF_DATA.forEach((data, idx) => {
     const processedSrc = imgMap[data.img] || data.img;
@@ -1122,9 +1118,9 @@ async function buildLeaves() {
     el.addEventListener('mousedown',  e => startLeafDrag(e, el));
     el.addEventListener('touchstart', e => startLeafDrag(e, el), { passive: false });
 
-    /* desktop: even→left, odd→right; mobile: all→left */
-    const target = (rightVisible && idx % 2 !== 0) ? rightEl : leftEl;
-    target.appendChild(el);
+    /* first 6 → left, last 6 → right; CSS hides right on mobile */
+    const target = (idx < 6 ? leftEl : rightEl) || leftEl;
+    if (target) target.appendChild(el);
   });
 }
 
@@ -1344,7 +1340,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (img) { img.src = src; img.style.mixBlendMode = ''; }
   });
 
-  makeTransparent('5323426833581676495.jpg').then(src => {
+  makeTransparent('5323426833581676523.jpg').then(src => {
     const img = document.getElementById('letterImg');
     if (img) img.src = src;
     /* also set as page background for full coverage */
