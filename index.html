@@ -180,7 +180,7 @@
       cursor:grab;
       display:flex; align-items:center; justify-content:center;
       text-align:center;
-      font-size:.78rem; font-weight:600; line-height:1.4;
+      font-size:7px; font-weight:600; line-height:1.15;
       color:rgba(30,10,40,.78);
       box-shadow: none;
       overflow:hidden;
@@ -395,18 +395,13 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf — page gradient as fixed bg so transparent areas match ground leaf */
+    /* Placed leaf — no background, only the leaf image */
     .placed-leaf {
       position:absolute;
       width:140px; height:95px;
       display:flex; align-items:center; justify-content:center;
       pointer-events:none;
-      background: linear-gradient(to bottom,
-        #c8e8f7 0%, #d8f0e8 38%,
-        #a0d090 55%, #78b060 70%,
-        #c8a060 82%, #a07840 100%);
-      background-size: 100vw 100vh;
-      background-attachment: fixed;
+      background:none;
     }
     .placed-leaf img {
       position:absolute; inset:0;
@@ -529,15 +524,15 @@
       line-height:1.45; margin-bottom:12px;
     }
     .phone-row {
-      display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+      display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
     }
     .phone-input {
-      flex:1; min-width:0; max-width:220px;
+      flex:1; min-width:160px;
       padding:10px 14px;
       font-family:'DM Sans',sans-serif; font-size:.9rem;
       color:#1a0820;
-      background:rgba(255,255,255,0.82);
-      border:1.5px solid rgba(255,160,210,0.4);
+      background:rgba(255,255,255,0.9);
+      border:1.5px solid rgba(200,100,180,0.45);
       border-radius:50px; outline:none;
       transition:border-color .2s;
     }
@@ -865,10 +860,12 @@ function buildForm() {
     `;
     wrap.appendChild(card);
   });
-  /* fit text after layout is fully rendered */
+  /* fit text after layout is fully painted */
   setTimeout(() => {
-    grid.querySelectorAll('.sticker').forEach(fitText);
-  }, 250);
+    requestAnimationFrame(() =>
+      grid.querySelectorAll('.sticker').forEach(fitText)
+    );
+  }, 400);
 }
 
 function onSlider(i, el) {
@@ -916,14 +913,14 @@ function goBack() {
 
 /* auto-fit text inside sticker */
 function fitText(el) {
-  if (!el.clientHeight) return;
+  if (!el.clientHeight || !el.clientWidth) return;
   el.style.wordBreak = 'break-word';
   el.style.overflowWrap = 'break-word';
-  el.style.lineHeight = '1.1';
-  el.style.padding = '18px 4px 4px';
-  let fs = 9;
+  el.style.lineHeight = '1.15';
+  let fs = 7;
   el.style.fontSize = fs + 'px';
-  while (el.scrollHeight > el.clientHeight && fs > 3.5) {
+  /* shrink if doesn't fit */
+  while (el.scrollHeight > el.clientHeight && fs > 3) {
     fs -= 0.5;
     el.style.fontSize = fs + 'px';
   }
@@ -1412,8 +1409,8 @@ function drawWheel() {
 document.addEventListener('DOMContentLoaded', () => {
   const inp = document.getElementById('phoneInput');
   if (!inp) return;
-  inp.addEventListener('input', () => {
-    let d = inp.value.replace(/\D/g,'').slice(0,11);
+  function applyMask(val) {
+    let d = val.replace(/\D/g,'').slice(0,11);
     if (d.startsWith('7')) d = '8' + d.slice(1);
     let out = '';
     if (d.length > 0)  out  = d.slice(0,1);
@@ -1421,7 +1418,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (d.length >= 4) out += ') ' + d.slice(4,7);
     if (d.length >= 7) out += '-'  + d.slice(7,9);
     if (d.length >= 9) out += '-'  + d.slice(9,11);
-    inp.value = out;
+    return out;
+  }
+  inp.addEventListener('input', () => { inp.value = applyMask(inp.value); });
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      const digits = inp.value.replace(/\D/g,'');
+      inp.value = applyMask(digits.slice(0,-1));
+    }
   });
 });
 
