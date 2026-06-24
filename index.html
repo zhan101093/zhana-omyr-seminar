@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Өмір Балансы Дөңгелегі</title>
+  <title>Өмір балансы дөңгелегі</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -65,11 +65,17 @@
     .form-container { width:100%; max-width:680px; display:flex; flex-direction:column; gap:10px; }
 
     .slider-card {
-      background:var(--card); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-      border:1px solid var(--border); border-radius:18px; padding:18px 22px 14px;
+      background: linear-gradient(135deg, rgba(255,220,235,0.55) 0%, rgba(240,210,255,0.45) 100%);
+      backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+      border:1px solid rgba(255,160,210,0.35); border-radius:18px; padding:18px 22px 14px;
       transition:transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .22s, border-color .22s, background .22s;
     }
-    .slider-card:hover { transform:translateY(-3px); background:var(--card-hover); border-color:var(--border-hover); }
+    .slider-card:hover {
+      transform:translateY(-3px);
+      background: linear-gradient(135deg, rgba(255,200,225,0.75) 0%, rgba(230,190,255,0.65) 100%);
+      border-color:rgba(255,100,180,0.45);
+      box-shadow: 0 10px 36px rgba(255,100,180,0.18);
+    }
 
     .card-top { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:13px; }
     .card-label { display:flex; align-items:center; gap:11px; flex:1; min-width:0; }
@@ -114,7 +120,7 @@
     }
     .results-header p { color:var(--text-muted); font-size:.84rem; font-weight:300; }
 
-    .wheel-wrap { width:100%; max-width:460px; }
+    .wheel-wrap { width:100%; max-width:620px; }
     #wheelCanvas { width:100%; height:auto; display:block; }
 
     .p2-actions { display:flex; gap:12px; margin-top:22px; flex-wrap:wrap; justify-content:center; }
@@ -219,7 +225,7 @@
 <div id="page1" class="page active">
   <header class="form-header">
     <div class="badge">✨ Өзіңізді тану &nbsp;·&nbsp; Өсу &nbsp;·&nbsp; Баланс</div>
-    <h1>Өмір Балансы<br>Дөңгелегі</h1>
+    <h1>Өмір балансы<br>дөңгелегі</h1>
     <div class="divider"></div>
     <p>Әрбір саладағы деңгейіңізді<br>1-ден 10-ға дейін бағалаңыз</p>
   </header>
@@ -233,7 +239,7 @@
 <div id="page2" class="page">
   <header class="results-header">
     <div class="badge">💖 Сіздің Өмір Балансыңыз</div>
-    <h1>Өмір Балансы Дөңгелегі</h1>
+    <h1>Өмір балансы дөңгелегі</h1>
     <div class="divider"></div>
     <p>Сіздің өмір балансыңыздың бейнесі</p>
   </header>
