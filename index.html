@@ -301,6 +301,7 @@
       #stickersGrid      { grid-template-columns:repeat(5,130px); gap:14px; }
       .sticker           { width:130px; height:130px; }
       .trash-container   { width:170px; height:204px; }
+      .trash-zone        { order:-1; }
     }
 
     /* ══ Desktop — lg (≥1200px) ══ */
@@ -712,7 +713,7 @@ function addTrashThumb(color, text) {
   Object.assign(chip.style, {
     background: color,
     borderRadius: '3px',
-    width: '26px', height: '26px',
+    width: '36px', height: '36px',
     flexShrink: '0',
     transform: `rotate(${(Math.random()*14-7).toFixed(1)}deg)`,
   });
