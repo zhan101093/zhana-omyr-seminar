@@ -178,7 +178,7 @@
       text-align:center;
       font-size:.8rem; font-weight:600; line-height:1.45;
       color:rgba(30,10,40,.78);
-      box-shadow: 3px 5px 16px rgba(0,0,0,.18), inset 0 -4px 0 rgba(0,0,0,.10);
+      box-shadow: none;
       transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s;
       position:relative; user-select:none;
     }
@@ -614,7 +614,9 @@ function onDragEnd(e) {
 
     setTimeout(() => {
       ghost.remove();
-      orig.remove();
+      /* hide original — keep empty spot */
+      orig.style.visibility = 'hidden';
+      orig.style.pointerEvents = 'none';
       /* mini sticker thumbnail inside trash label */
       addTrashThumb(orig.style.background, orig.textContent);
       trash.classList.add('shake');
@@ -657,7 +659,9 @@ function addTrashThumb(color, text) {
 }
 
 function checkAllGone() {
-  if (document.querySelectorAll('.sticker').length === 0) {
+  const visible = [...document.querySelectorAll('.sticker')]
+    .filter(el => el.style.visibility !== 'hidden').length;
+  if (visible === 0) {
     document.getElementById('stickersGrid').style.display = 'none';
     document.getElementById('doneMsg').style.display = 'block';
   }
