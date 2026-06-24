@@ -395,13 +395,15 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf on tree — no background, leaf keeps original look */
+    /* Placed leaf — white bg blocks green tree from showing through transparent areas */
     .placed-leaf {
       position:absolute;
       width:140px; height:95px;
       display:flex; align-items:center; justify-content:center;
       animation:leafLand .5s cubic-bezier(.34,1.56,.64,1);
       pointer-events:none;
+      background:rgba(255,255,255,0.92);
+      border-radius:50% 6% 50% 6% / 40% 6% 40% 6%;
     }
     .placed-leaf img {
       position:absolute; inset:0;
@@ -661,7 +663,7 @@
     </header>
 
     <textarea id="letterText" class="letter-area"
-      placeholder="Сүйікті өзім,&#10;&#10;Бүгін мен сезінем..."></textarea>
+      placeholder="..."></textarea>
 
     <div class="p4-letter-actions">
       <button type="button" class="btn-secondary" onclick="goBackFromLetter()">← Артқа</button>
@@ -1027,7 +1029,8 @@ function goToTree() {
   window.scrollTo({ top:0, behavior:'smooth' });
   document.getElementById('page4').classList.remove('active');
   document.getElementById('page5').classList.add('active');
-  buildLeaves();
+  /* delay so CSS (display:flex on ground-right) is computed before building leaves */
+  setTimeout(buildLeaves, 80);
 }
 
 /* page5 ← back to page4 (letter) */
