@@ -336,10 +336,15 @@
       to   { transform:scale(1) rotate(var(--lr)); opacity:1; }
     }
 
+    /* Page 4 main layout: mobile=column, desktop=row (leaves|tree|leaves) */
+    .p4-layout {
+      display:flex; flex-direction:column; align-items:center;
+      width:100%; max-width:1100px; gap:20px;
+    }
+
     /* Ground leaves — transparent image cards */
     .ground-section {
       width:100%; max-width:860px;
-      margin:16px auto 0;
     }
     .ground-leaves {
       display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
@@ -398,13 +403,15 @@
     .p4-back { margin-top:28px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
 
     @media(min-width:860px) {
-      .tree-scene    { max-width:600px; }
-      .ground-section{ max-width:960px; }
-      .p4-header h2  { font-size:2.8rem; }
-      .ground-leaf   { width:150px; height:100px; }
-      .ground-leaf .lf-text { font-size:.72rem; }
-      .placed-leaf   { width:114px; height:76px; }
-      .placed-leaf .lf-text { font-size:.6rem; }
+      .p4-layout      { flex-direction:row; align-items:flex-start; gap:24px; }
+      .tree-scene     { max-width:460px; flex-shrink:0; order:2; }
+      .ground-section { max-width:300px; order:1; flex-shrink:0; }
+      .ground-leaves  { flex-direction:column; align-items:center; gap:10px; padding:14px 10px; }
+      .p4-header h2   { font-size:2.6rem; }
+      .ground-leaf    { width:140px; height:92px; }
+      .ground-leaf .lf-text { font-size:.68rem; }
+      .placed-leaf    { width:100px; height:66px; }
+      .placed-leaf .lf-text { font-size:.58rem; }
     }
 
     /* ══ Tablet (≥600px) ══ */
@@ -556,31 +563,29 @@
     <p>Жапырақтарды сүйреп ағашқа қойыңыз</p>
   </header>
 
-  <div class="tree-scene">
-    <!-- ── Tree / basket image ── -->
-    <img src="tree.png.jpg" alt="Ағаш" id="treeImg"
-      style="width:100%;height:auto;display:block;position:relative;z-index:1;mix-blend-mode:multiply"
-      onerror="this.style.display='none';document.getElementById('treeFallback').style.display='block'">
-    <!-- Fallback SVG if image not found -->
-    <svg id="treeFallback" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:none">
-      <rect x="122" y="282" width="56" height="98" rx="12" fill="#795548"/>
-      <rect x="128" y="282" width="44" height="98" rx="10" fill="#8d6e63"/>
-      <ellipse cx="150" cy="215" rx="135" ry="95" fill="#33691e"/>
-      <ellipse cx="150" cy="178" rx="118" ry="88" fill="#558b2f"/>
-      <ellipse cx="150" cy="142" rx="100" ry="82" fill="#689f38"/>
-      <ellipse cx="132" cy="112" rx="78"  ry="65" fill="#7cb342"/>
-    </svg>
+  <div class="p4-layout">
 
-    <!-- Drop zone on canopy -->
-    <div class="tree-drop-zone" id="treeDropZone"></div>
+    <!-- ground leaves left -->
+    <div class="ground-section">
+      <div class="ground-leaves" id="groundLeaves"></div>
+    </div>
 
-    <!-- Placed green leaves container -->
-    <div class="tree-leaf-container" id="treeLeafContainer"></div>
-  </div>
+    <!-- tree center -->
+    <div class="tree-scene">
+      <img src="tree.png.jpg" alt="Ағаш" id="treeImg"
+        style="width:100%;height:auto;display:block;position:relative;z-index:1"
+        onerror="this.style.display='none';document.getElementById('treeFallback').style.display='block'">
+      <svg id="treeFallback" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:none">
+        <rect x="122" y="282" width="56" height="98" rx="12" fill="#795548"/>
+        <ellipse cx="150" cy="215" rx="135" ry="95" fill="#33691e"/>
+        <ellipse cx="150" cy="160" rx="110" ry="90" fill="#558b2f"/>
+        <ellipse cx="150" cy="120" rx="90" ry="75" fill="#689f38"/>
+      </svg>
+      <div class="tree-drop-zone" id="treeDropZone"></div>
+      <div class="tree-leaf-container" id="treeLeafContainer"></div>
+    </div>
 
-  <div class="ground-section">
-    <div class="ground-leaves" id="groundLeaves"></div>
-  </div>
+  </div><!-- /p4-layout -->
 
   <div class="p4-back">
     <button type="button" class="btn-secondary" onclick="goBackToP3()">← Артқа</button>
@@ -1167,10 +1172,14 @@ function drawWheel() {
 window.addEventListener('DOMContentLoaded', () => {
   buildForm();
 
-  /* Make basket image transparent */
+  /* Make basket & tree images transparent */
   makeTransparent('bag.png.jpg').then(src => {
-    const basketImg = document.querySelector('img.basket-svg');
-    if (basketImg) basketImg.src = src;
+    const img = document.querySelector('img.basket-svg');
+    if (img) img.src = src;
+  });
+  makeTransparent('tree.png.jpg').then(src => {
+    const img = document.getElementById('treeImg');
+    if (img) { img.src = src; img.style.mixBlendMode = ''; }
   });
 
   const saved = localStorage.getItem('wheel_scores');
