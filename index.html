@@ -300,19 +300,19 @@
       margin:0 auto;
     }
 
-    /* Drop zone overlay on tree canopy */
+    /* Drop zone — covers whole image */
     .tree-drop-zone {
-      position:absolute; top:0; left:0; right:0; height:72%;
-      z-index:3; border-radius:50%;
+      position:absolute; top:5%; left:5%; right:5%; bottom:5%;
+      z-index:3; border-radius:8px;
       transition: box-shadow .2s;
     }
     .tree-drop-zone.tree-active {
-      box-shadow: inset 0 0 40px rgba(100,200,80,0.35);
+      box-shadow: inset 0 0 50px rgba(100,220,80,0.4);
     }
 
-    /* Placed leaves on tree */
+    /* Placed leaves container — whole image area */
     .tree-leaf-container {
-      position:absolute; top:0; left:0; right:0; height:72%;
+      position:absolute; top:5%; left:5%; right:5%; bottom:5%;
       pointer-events:none; z-index:2;
       overflow:hidden;
     }
@@ -532,16 +532,18 @@
   </header>
 
   <div class="tree-scene">
-    <!-- ── Tree image — суретті жіберген соң осы SVG-ді <img> тагімен ауыстырамыз ── -->
-    <svg id="treeSvg" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
+    <!-- ── Tree / basket image ── -->
+    <img src="tree.png" alt="Ағаш" id="treeImg"
+      style="width:100%;height:auto;display:block;position:relative;z-index:1"
+      onerror="this.style.display='none';document.getElementById('treeFallback').style.display='block'">
+    <!-- Fallback SVG if image not found -->
+    <svg id="treeFallback" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:none">
       <rect x="122" y="282" width="56" height="98" rx="12" fill="#795548"/>
       <rect x="128" y="282" width="44" height="98" rx="10" fill="#8d6e63"/>
-      <rect x="142" y="282" width="14" height="98" rx="7" fill="rgba(0,0,0,0.08)"/>
-      <ellipse cx="150" cy="215" rx="135" ry="95"  fill="#33691e"/>
-      <ellipse cx="150" cy="178" rx="118" ry="88"  fill="#558b2f"/>
-      <ellipse cx="150" cy="142" rx="100" ry="82"  fill="#689f38"/>
-      <ellipse cx="132" cy="112" rx="78"  ry="65"  fill="#7cb342"/>
-      <ellipse cx="122" cy="96"  rx="50"  ry="40"  fill="rgba(255,255,255,0.07)"/>
+      <ellipse cx="150" cy="215" rx="135" ry="95" fill="#33691e"/>
+      <ellipse cx="150" cy="178" rx="118" ry="88" fill="#558b2f"/>
+      <ellipse cx="150" cy="142" rx="100" ry="82" fill="#689f38"/>
+      <ellipse cx="132" cy="112" rx="78"  ry="65" fill="#7cb342"/>
     </svg>
 
     <!-- Drop zone on canopy -->
