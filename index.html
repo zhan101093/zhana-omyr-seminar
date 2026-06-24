@@ -511,19 +511,19 @@
     /* Phone number section */
     .phone-section {
       width:92%; max-width:520px;
-      margin-top:20px;
-      background:rgba(255,255,255,0.22);
-      border:1.5px solid rgba(255,160,210,0.35);
+      margin-top:16px;
+      background:rgba(255,255,255,0.28);
+      border:1.5px solid rgba(200,100,180,0.4);
       border-radius:16px;
-      padding:16px 16px;
+      padding:14px 14px;
       backdrop-filter:blur(8px);
       text-align:center;
     }
     .phone-info {
       font-family:'DM Sans',sans-serif;
-      font-size:.85rem; font-weight:500;
-      color:#5a1a60;
-      line-height:1.5; margin-bottom:14px;
+      font-size:.82rem; font-weight:600;
+      color:#4a0a55;
+      line-height:1.45; margin-bottom:12px;
     }
     .phone-row {
       display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
@@ -914,21 +914,15 @@ function goBack() {
 /* auto-fit text inside sticker */
 function fitText(el) {
   if (!el.clientHeight) return;
-  el.style.wordBreak = 'keep-all';
+  el.style.wordBreak = 'break-word';
   el.style.overflowWrap = 'break-word';
-  el.style.lineHeight = '1.15';
-  let fs = 10;
+  el.style.lineHeight = '1.1';
+  el.style.padding = '18px 4px 4px';
+  let fs = 9;
   el.style.fontSize = fs + 'px';
-  while (el.scrollHeight > el.clientHeight && fs > 4.5) {
+  while (el.scrollHeight > el.clientHeight && fs > 3.5) {
     fs -= 0.5;
     el.style.fontSize = fs + 'px';
-  }
-  if (el.scrollHeight > el.clientHeight) {
-    el.style.wordBreak = 'break-all';
-    while (el.scrollHeight > el.clientHeight && fs > 4) {
-      fs -= 0.5;
-      el.style.fontSize = fs + 'px';
-    }
   }
 }
 
