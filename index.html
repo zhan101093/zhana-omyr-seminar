@@ -310,11 +310,12 @@
       z-index:3;
     }
 
-    /* Placed leaves container — whole image area */
+    /* Placed leaves container — above tree image */
     .tree-leaf-container {
-      position:absolute; top:5%; left:5%; right:5%; bottom:5%;
-      pointer-events:none; z-index:2;
-      overflow:hidden;
+      position:absolute; top:0; left:0; right:0; bottom:0;
+      pointer-events:none; z-index:4;
+      overflow:visible;
+      isolation:isolate;
     }
 
     .placed-leaf {
@@ -394,15 +395,13 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf on tree — white background prevents green tree showing through */
+    /* Placed leaf on tree — no background, leaf keeps original look */
     .placed-leaf {
       position:absolute;
       width:140px; height:95px;
       display:flex; align-items:center; justify-content:center;
       animation:leafLand .5s cubic-bezier(.34,1.56,.64,1);
       pointer-events:none;
-      background:rgba(255,255,255,0.92);
-      border-radius:6px;
     }
     .placed-leaf img {
       position:absolute; inset:0;
@@ -652,7 +651,6 @@
   <header class="p4-header">
     <div class="badge">🌿 Өсу · Жаңару</div>
     <h2>Сізге қандай істер күш-қуат, ресурс береді?</h2>
-    <div class="divider"></div>
     <p>Жапырақтарды сүйреп ағашқа қойыңыз</p>
   </header>
 
