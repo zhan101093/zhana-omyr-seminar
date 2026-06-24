@@ -337,10 +337,15 @@
       display:flex; flex-direction:column; align-items:center;
       width:100%; max-width:1100px; gap:20px;
     }
-    /* mobile: tree on top */
+    /* mobile: tree top, leaves below in 3-col grid */
     .tree-scene   { order:-1; }
     .ground-left  { order:1; width:100%; }
-    .ground-right { display:none; } /* hidden on mobile, all leaves go to groundLeft */
+    .ground-right { display:none; }
+    .ground-left .ground-leaves {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
 
     /* Ground leaves — transparent image cards */
     .ground-section {
@@ -390,6 +395,7 @@
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit:contain;
+      mix-blend-mode: multiply; /* removes white background, keeps leaf colors */
     }
     .placed-leaf .lf-text {
       position:relative; z-index:1;
@@ -581,7 +587,7 @@
     <!-- tree center -->
     <div class="tree-scene">
       <img src="tree.png.jpg" alt="Ағаш" id="treeImg"
-        style="width:100%;height:auto;display:block;position:relative;z-index:1"
+        style="width:100%;height:auto;display:block;position:relative;z-index:1;filter:sepia(0.6) saturate(2) hue-rotate(-15deg) brightness(0.85)"
         onerror="this.style.display='none';document.getElementById('treeFallback').style.display='block'">
       <svg id="treeFallback" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:none">
         <rect x="130" y="275" width="40" height="105" rx="10" fill="#6B4226"/>
@@ -964,8 +970,12 @@ function makeTransparent(src) {
 }
 
 async function buildLeaves() {
-  const grid = document.getElementById('groundLeaves');
-  grid.innerHTML = '<p style="color:rgba(30,80,10,.5);padding:20px;font-size:.85rem">Жүктелуде…</p>';
+  const leftEl  = document.getElementById('groundLeft');
+  const rightEl = document.getElementById('groundRight');
+  if (!leftEl) return;
+
+  leftEl.innerHTML  = '';
+  if (rightEl) rightEl.innerHTML = '';
   document.getElementById('treeLeafContainer').innerHTML = '';
 
   const [src1, src2] = await Promise.all([
@@ -974,26 +984,24 @@ async function buildLeaves() {
   ]);
   const imgMap = { 'list1.jpg': src1, 'list2.jpg': src2 };
 
-  /* find containers — support both old single and new split layout */
-  const leftEl  = document.getElementById('groundLeft')  || document.getElementById('groundLeaves');
-  const rightEl = document.getElementById('groundRight') || leftEl;
-  if (leftEl)  leftEl.innerHTML  = '';
-  if (rightEl && rightEl !== leftEl) rightEl.innerHTML = '';
+  const isMobile = window.innerWidth < 860;
 
   LEAF_DATA.forEach((data, idx) => {
-    const imgSrc  = imgMap[data.img] || data.img;
-    const el      = document.createElement('div');
-    el.className  = 'ground-leaf';
-    el.dataset.img  = imgSrc;
-    el.dataset.text = data.text;
+    const processedSrc = imgMap[data.img] || data.img;
+    const el = document.createElement('div');
+    el.className = 'ground-leaf';
+    el.dataset.img         = processedSrc; /* for ghost */
+    el.dataset.originalImg = data.img;     /* original JPG — placed leaf keeps this */
+    el.dataset.text        = data.text;
     const tilt = (Math.random() * 10 - 5).toFixed(1);
     el.style.transform = `rotate(${tilt}deg)`;
-    el.innerHTML = `<img src="${imgSrc}" alt=""><span class="lf-text">${data.text}</span>`;
+    el.innerHTML = `<img src="${processedSrc}" alt=""><span class="lf-text">${data.text}</span>`;
     el.addEventListener('mousedown',  e => startLeafDrag(e, el));
     el.addEventListener('touchstart', e => startLeafDrag(e, el), { passive: false });
-    /* alternate: even → left, odd → right */
-    const target = (idx % 2 === 0) ? leftEl : rightEl;
-    if (target) target.appendChild(el);
+
+    /* mobile: all → left; desktop: alternate left/right */
+    const target = (isMobile || !rightEl || idx % 2 === 0) ? leftEl : rightEl;
+    target.appendChild(el);
   });
 }
 
@@ -1060,7 +1068,7 @@ function onLeafEnd(e) {
 
   const onTree = cx >= zr.left && cx <= zr.right && cy >= zr.top && cy <= zr.bottom;
   if (onTree) {
-    placeLeaf(leafEl.dataset.text, leafEl.dataset.img, zr, cx, cy);
+    placeLeaf(leafEl.dataset.text, leafEl.dataset.originalImg || leafEl.dataset.img, zr, cx, cy);
     leafEl.classList.add('gone');
   } else {
     leafEl.style.opacity = '1';
