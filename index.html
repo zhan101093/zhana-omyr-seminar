@@ -395,12 +395,14 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf — no background */
+    /* Placed leaf — subtle neutral bg stops tree bleeding through */
     .placed-leaf {
       position:absolute;
       width:140px; height:95px;
       display:flex; align-items:center; justify-content:center;
       pointer-events:none;
+      background:rgba(240,248,230,0.6);
+      border-radius:6px;
     }
     .placed-leaf img {
       position:absolute; inset:0;
@@ -425,11 +427,11 @@
     @media(min-width:860px) {
       .p4-layout {
         flex-direction:row; align-items:flex-start;
-        gap:14px; flex-wrap:nowrap; justify-content:center;
+        gap:10px; flex-wrap:nowrap; justify-content:center;
       }
-      .ground-left  { order:1; flex:0 0 auto; }
+      .ground-left  { order:1; flex:0 0 auto; width:auto; margin:0; }
       .tree-scene   { order:2; flex:0 0 340px; max-width:340px; }
-      .ground-right { order:3; flex:0 0 auto; display:flex; }
+      .ground-right { order:3; flex:0 0 auto; display:flex; width:auto; margin:0; }
 
       /* 2 columns × 3 rows on each side — 115px to prevent overflow */
       .ground-left .ground-leaves,
@@ -462,16 +464,16 @@
     .letter-bg-img {
       position:absolute;
       top:0; left:0; width:100%; height:100%;
-      object-fit:contain;
-      object-position:center top;
+      object-fit:cover;
+      object-position:center center;
       z-index:0;
     }
     .letter-content {
       position:relative; z-index:1;
       width:100%; min-height:100vh;
       display:flex; flex-direction:column;
-      align-items:center; justify-content:flex-start;
-      padding:6vh 20px 50px;
+      align-items:center; justify-content:center;
+      padding:30px 16px 50px;
     }
     .letter-title {
       font-family:'Cormorant Garamond',serif;
@@ -481,21 +483,21 @@
       background-clip:text; margin-bottom:12px;
     }
     .letter-area {
-      width:220px; height:54vh;
-      max-height:480px;
+      width:88%; max-width:340px;
+      height:52vh; max-height:460px;
       background:transparent;
       border:none; outline:none;
       padding:6px 8px;
       font-family:'Cormorant Garamond',serif;
       font-style:italic;
       font-size:.85rem; line-height:1.5;
-      color:rgba(120,60,140,0.9);
+      color:rgba(80,30,100,0.9);
       resize:none;
       display:block; margin:0 auto;
     }
     @media(min-width:860px) {
       .letter-content { padding:9vh 20px 50px; }
-      .letter-area    { width:260px; height:56vh; max-height:520px; font-size:.92rem; }
+      .letter-area    { width:320px; height:56vh; max-height:520px; font-size:.95rem; }
     }
     .letter-area::placeholder { color:rgba(120,60,140,0.35); font-style:italic; }
     .letter-area:focus {
@@ -508,30 +510,30 @@
 
     /* Phone number section */
     .phone-section {
-      width:100%; max-width:580px;
-      margin-top:24px;
-      background:rgba(255,255,255,0.16);
-      border:1.5px solid rgba(255,160,210,0.3);
+      width:92%; max-width:520px;
+      margin-top:20px;
+      background:rgba(255,255,255,0.22);
+      border:1.5px solid rgba(255,160,210,0.35);
       border-radius:16px;
-      padding:20px 24px;
-      backdrop-filter:blur(6px);
+      padding:16px 16px;
+      backdrop-filter:blur(8px);
       text-align:center;
     }
     .phone-info {
-      font-family:'Cormorant Garamond',serif;
-      font-size:1rem; font-style:italic;
-      color:rgba(120,60,140,0.85);
-      line-height:1.55; margin-bottom:16px;
+      font-family:'DM Sans',sans-serif;
+      font-size:.85rem; font-weight:500;
+      color:#5a1a60;
+      line-height:1.5; margin-bottom:14px;
     }
     .phone-row {
       display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
     }
     .phone-input {
-      flex:1; min-width:180px; max-width:280px;
-      padding:11px 16px;
-      font-family:'DM Sans',sans-serif; font-size:.95rem;
+      flex:1; min-width:0; max-width:220px;
+      padding:10px 14px;
+      font-family:'DM Sans',sans-serif; font-size:.9rem;
       color:#1a0820;
-      background:rgba(255,255,255,0.7);
+      background:rgba(255,255,255,0.82);
       border:1.5px solid rgba(255,160,210,0.4);
       border-radius:50px; outline:none;
       transition:border-color .2s;
@@ -860,10 +862,10 @@ function buildForm() {
     `;
     wrap.appendChild(card);
   });
-  /* fit text after layout is fully computed */
+  /* fit text after layout is fully rendered */
   setTimeout(() => {
     grid.querySelectorAll('.sticker').forEach(fitText);
-  }, 120);
+  }, 250);
 }
 
 function onSlider(i, el) {
@@ -911,10 +913,11 @@ function goBack() {
 
 /* auto-fit text inside sticker */
 function fitText(el) {
+  if (!el.clientHeight) return;
   el.style.wordBreak = 'keep-all';
   el.style.overflowWrap = 'break-word';
-  el.style.lineHeight = '1.2';
-  let fs = 11;
+  el.style.lineHeight = '1.15';
+  let fs = 10;
   el.style.fontSize = fs + 'px';
   while (el.scrollHeight > el.clientHeight && fs > 4.5) {
     fs -= 0.5;
