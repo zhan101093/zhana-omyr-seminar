@@ -455,6 +455,37 @@
       .placed-leaf .lf-text { font-size:.64rem; }
     }
 
+    /* ══════════ PAGE 4 — LETTER ══════════ */
+    .letter-card {
+      width:100%; max-width:620px;
+      margin:16px 0 0;
+      position:relative;
+    }
+    .letter-img {
+      width:100%; height:auto; display:block;
+      border-radius:8px;
+    }
+    /* transparent textarea on top of letter image */
+    .letter-area {
+      position:absolute;
+      top:12%; left:9%; right:9%; bottom:8%;
+      background:transparent;
+      border:none; outline:none;
+      resize:none;
+      font-family:'DM Sans',sans-serif;
+      font-size:.95rem; line-height:1.8;
+      color:#2a1a3a;
+      padding:4px 8px;
+    }
+    .letter-area::placeholder { color:rgba(60,20,80,0.4); font-style:italic; }
+    .p4-letter-actions {
+      display:flex; gap:14px; margin-top:20px; flex-wrap:wrap; justify-content:center;
+    }
+    @media(min-width:860px) {
+      .letter-card { max-width:720px; }
+      .letter-area { font-size:1rem; }
+    }
+
     /* ══ Tablet (≥600px) ══ */
     @media(min-width:600px) {
       .form-header h1 { font-size:2.8rem; }
@@ -595,8 +626,29 @@
   </div>
 </div>
 
-<!-- ══════════ PAGE 4 — TREE ══════════ -->
-<div id="page4" class="page">
+<!-- ══════════ PAGE 4 — LETTER ══════════ -->
+<div id="page4" class="page" style="align-items:center;justify-content:flex-start">
+  <header class="form-header" style="max-width:700px;width:100%">
+    <div class="badge">✉️ Болашаққа хат</div>
+    <h1 style="font-size:2.4rem">6 айдан кейінгі өзіме хат</h1>
+    <div class="divider"></div>
+    <p>Болашақтағы өзіңізге не айтқыңыз келеді?</p>
+  </header>
+
+  <div class="letter-card">
+    <img id="letterImg" src="5323426833581676495.jpg" alt="Хат" class="letter-img">
+    <textarea id="letterText" class="letter-area"
+      placeholder="Сүйікті өзім,&#10;&#10;Бүгін мен сезінем..."></textarea>
+  </div>
+
+  <div class="p4-letter-actions">
+    <button type="button" class="btn-secondary" onclick="goBackFromLetter()">← Артқа</button>
+    <button type="button" class="btn-primary"   onclick="goToTree()">Әрі қарай →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 5 — TREE ══════════ -->
+<div id="page5" class="page">
   <header class="p4-header">
     <div class="badge">🌿 Өсу · Жаңару</div>
     <h2>Сізге қандай істер күш-қуат, ресурс береді?</h2>
@@ -636,7 +688,7 @@
   </div><!-- /p4-layout -->
 
   <div class="p4-back">
-    <button type="button" class="btn-secondary" onclick="goBackToP3()">← Артқа</button>
+    <button type="button" class="btn-secondary" onclick="goBackFromTree()">← Артқа</button>
   </div>
 </div>
 
@@ -934,17 +986,33 @@ function checkAllGone() {
   /* no special action needed — message is always visible */
 }
 
+/* page3 → page4 (letter) */
 function restartAll() {
   window.scrollTo({ top:0, behavior:'smooth' });
   document.getElementById('page3').classList.remove('active');
   document.getElementById('page4').classList.add('active');
-  buildLeaves();
 }
 
-function goBackToP3() {
+/* page4 ← back to page3 */
+function goBackFromLetter() {
   window.scrollTo({ top:0, behavior:'smooth' });
   document.getElementById('page4').classList.remove('active');
   document.getElementById('page3').classList.add('active');
+}
+
+/* page4 → page5 (tree) */
+function goToTree() {
+  window.scrollTo({ top:0, behavior:'smooth' });
+  document.getElementById('page4').classList.remove('active');
+  document.getElementById('page5').classList.add('active');
+  buildLeaves();
+}
+
+/* page5 ← back to page4 (letter) */
+function goBackFromTree() {
+  window.scrollTo({ top:0, behavior:'smooth' });
+  document.getElementById('page5').classList.remove('active');
+  document.getElementById('page4').classList.add('active');
 }
 
 /* ════════════════════════════════
@@ -1002,7 +1070,8 @@ async function buildLeaves() {
 
   leftEl.innerHTML  = '';
   if (rightEl) rightEl.innerHTML = '';
-  document.getElementById('treeLeafContainer').innerHTML = '';
+  const treeLeafCont = document.getElementById('treeLeafContainer');
+  if (treeLeafCont) treeLeafCont.innerHTML = '';
 
   const [src1, src2] = await Promise.all([
     makeTransparent('list1.jpg'),
@@ -1245,6 +1314,11 @@ window.addEventListener('DOMContentLoaded', () => {
   makeTransparent('tree.jpg').then(src => {
     const img = document.getElementById('treeImg');
     if (img) { img.src = src; img.style.mixBlendMode = ''; }
+  });
+
+  makeTransparent('5323426833581676495.jpg').then(src => {
+    const img = document.getElementById('letterImg');
+    if (img) img.src = src;
   });
 
   const saved = localStorage.getItem('wheel_scores');
