@@ -120,7 +120,14 @@
     }
     .results-header p { color:var(--text-muted); font-size:.84rem; font-weight:300; }
 
-    .wheel-wrap { width:100%; max-width:620px; }
+    /* Page 2 layout — mobile: column, desktop: row */
+    .p2-inner {
+      display:flex; flex-direction:column; align-items:center;
+      width:100%; max-width:1100px; gap:20px;
+    }
+    .p2-right { display:flex; flex-direction:column; align-items:center; }
+
+    .wheel-wrap { width:100%; max-width:460px; }
     #wheelCanvas { width:100%; height:auto; display:block; }
 
     .p2-actions { display:flex; gap:12px; margin-top:22px; flex-wrap:wrap; justify-content:center; }
@@ -249,10 +256,15 @@
       .submit-area     { margin-top:38px; max-width:1060px; width:100%; }
       .btn-primary     { padding:18px 68px; font-size:1.08rem; }
 
-      /* Page 2 */
-      .results-header h1 { font-size:2.8rem; }
-      .wheel-wrap        { max-width:720px; }
-      .p2-actions        { gap:16px; margin-top:28px; }
+      /* Page 2 — side-by-side */
+      #page2             { justify-content:center; }
+      .p2-inner          { flex-direction:row; align-items:center; gap:56px; }
+      .wheel-wrap        { max-width:min(48vh, 500px); flex-shrink:0; }
+      .p2-right          { align-items:flex-start; max-width:380px; }
+      .results-header    { text-align:left; margin-bottom:0; }
+      .results-header h1 { font-size:2.6rem; }
+      .divider           { margin:0 0 14px !important; }
+      .p2-actions        { justify-content:flex-start; gap:14px; margin-top:32px; }
       .btn-secondary     { padding:13px 40px; font-size:1rem; }
 
       /* Page 3 */
@@ -271,8 +283,9 @@
       .card-val          { font-size:2.5rem; }
       .icon-wrap         { width:44px; height:44px; font-size:1.35rem; }
       .slider-card       { padding:22px 28px 16px; }
-      .wheel-wrap        { max-width:800px; }
-      .results-header h1 { font-size:3.2rem; }
+      .wheel-wrap        { max-width:min(50vh, 540px); }
+      .results-header h1 { font-size:3rem; }
+      .p2-right          { max-width:420px; }
       #stickersGrid      { grid-template-columns:repeat(5,150px); }
       .p3-header h2      { font-size:3.2rem; }
       .trash-can         { font-size:10rem; }
@@ -280,13 +293,16 @@
 
     /* ══ Mobile ══ */
     @media(max-width:700px) {
-      #stickersGrid { grid-template-columns:repeat(2,140px); }
-      .p3-layout { gap:28px; }
+      .p3-layout   { flex-direction:column; align-items:center; gap:24px; }
+      #stickersGrid { grid-template-columns:repeat(3,100px); gap:12px; }
+      .sticker      { width:100px; height:100px; font-size:.7rem; padding:10px 8px; }
+      .trash-zone   { flex-direction:row; gap:16px; padding:16px 24px; min-width:unset; width:100%; max-width:340px; justify-content:center; }
+      .trash-can    { font-size:4rem; }
     }
-    @media(max-width:500px) {
+    @media(max-width:420px) {
       .form-header h1 { font-size:2.2rem; }
-      #stickersGrid { grid-template-columns:repeat(2,130px); }
-      .sticker { width:130px; height:130px; font-size:.75rem; }
+      #stickersGrid   { grid-template-columns:repeat(3,88px); gap:10px; }
+      .sticker        { width:88px; height:88px; font-size:.65rem; }
     }
   </style>
 </head>
@@ -312,19 +328,23 @@
 
 <!-- ══════════ PAGE 2 — WHEEL ══════════ -->
 <div id="page2" class="page">
-  <header class="results-header">
-    <div class="badge">💖 Сіздің Өмір Балансыңыз</div>
-    <h1>Өмір балансы дөңгелегі</h1>
-    <div class="divider"></div>
-    <p>Сіздің өмір балансыңыздың бейнесі</p>
-  </header>
-  <div class="wheel-wrap">
-    <canvas id="wheelCanvas" width="500" height="500"
-      role="img" aria-label="Өмір балансы дөңгелегі диаграммасы"></canvas>
-  </div>
-  <div class="p2-actions">
-    <button type="button" class="btn-secondary" onclick="retake()">← Қайтадан бағалау</button>
-    <button type="button" class="btn-primary" onclick="goToStickers()">Әрі қарай &rarr;</button>
+  <div class="p2-inner">
+    <div class="wheel-wrap">
+      <canvas id="wheelCanvas" width="500" height="500"
+        role="img" aria-label="Өмір балансы дөңгелегі диаграммасы"></canvas>
+    </div>
+    <div class="p2-right">
+      <header class="results-header">
+        <div class="badge">💖 Сіздің Өмір Балансыңыз</div>
+        <h1>Өмір балансы дөңгелегі</h1>
+        <div class="divider" style="margin:0 0 14px"></div>
+        <p>Сіздің өмір балансыңыздың бейнесі</p>
+      </header>
+      <div class="p2-actions">
+        <button type="button" class="btn-secondary" onclick="retake()">← Қайтадан бағалау</button>
+        <button type="button" class="btn-primary" onclick="goToStickers()">Әрі қарай &rarr;</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -577,13 +597,16 @@ function onDragEnd(e) {
   zone.classList.remove('drag-over');
 
   if (overTrash) {
+    const zone  = document.getElementById('trashZone');
     const trash = document.getElementById('trashCan');
-    const tr    = trash.getBoundingClientRect();
-    const spin  = (Math.random() > .5 ? 1 : -1) * (240 + Math.random() * 180);
-    dragGhost.style.transition = 'all .42s cubic-bezier(.55,.06,.68,.19)';
-    dragGhost.style.left    = (tr.left + tr.width/2  - parseFloat(dragGhost.style.width)/2)  + 'px';
-    dragGhost.style.top     = (tr.top  + tr.height/2 - parseFloat(dragGhost.style.height)/2) + 'px';
-    dragGhost.style.transform = `scale(0.05) rotate(${spin}deg)`;
+    const zr    = zone.getBoundingClientRect();
+    const spin  = (Math.random() > .5 ? 1 : -1) * (180 + Math.random() * 120);
+
+    /* fly into the trash opening (top-center of zone) */
+    dragGhost.style.transition = 'all .38s cubic-bezier(.55,.06,.68,.19)';
+    dragGhost.style.left    = (zr.left + zr.width/2 - parseFloat(dragGhost.style.width)/2) + 'px';
+    dragGhost.style.top     = (zr.top  + 20) + 'px';
+    dragGhost.style.transform = `scale(0.12) rotate(${spin}deg)`;
     dragGhost.style.opacity = '0';
 
     const ghost = dragGhost, orig = dragEl;
@@ -592,10 +615,12 @@ function onDragEnd(e) {
     setTimeout(() => {
       ghost.remove();
       orig.remove();
+      /* mini sticker thumbnail inside trash label */
+      addTrashThumb(orig.style.background, orig.textContent);
       trash.classList.add('shake');
       setTimeout(() => trash.classList.remove('shake'), 500);
       checkAllGone();
-    }, 420);
+    }, 380);
   } else {
     /* snap back */
     dragEl.style.opacity = '1';
@@ -603,6 +628,32 @@ function onDragEnd(e) {
     dragGhost = null;
     dragEl    = null;
   }
+}
+
+/* show tiny sticker inside trash zone */
+function addTrashThumb(color, text) {
+  let pile = document.getElementById('trashPile');
+  if (!pile) {
+    pile = document.createElement('div');
+    pile.id = 'trashPile';
+    Object.assign(pile.style, {
+      display:'flex', flexWrap:'wrap', gap:'4px',
+      maxWidth:'140px', justifyContent:'center', marginTop:'8px',
+    });
+    document.getElementById('trashZone').appendChild(pile);
+  }
+  const chip = document.createElement('div');
+  Object.assign(chip.style, {
+    background: color,
+    borderRadius: '3px',
+    width: '22px', height: '22px',
+    boxShadow: '1px 2px 4px rgba(0,0,0,.18)',
+    flexShrink: '0',
+    transform: `rotate(${(Math.random()*10-5).toFixed(1)}deg)`,
+    transition: 'transform .2s',
+  });
+  chip.title = text;
+  pile.appendChild(chip);
 }
 
 function checkAllGone() {
