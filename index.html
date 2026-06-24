@@ -434,16 +434,16 @@
       .submit-area        { margin-top:38px; max-width:1060px; width:100%; }
       .btn-primary        { padding:18px 68px; font-size:1.08rem; }
 
-      /* Page 2 — wheel left, text right */
-      #page2              { justify-content:center; }
-      .p2-inner           { flex-direction:row; align-items:center; gap:52px; }
-      .p2-wheel-col       { max-width:540px; flex-shrink:0; order:1; }
-      .wheel-wrap         { max-width:540px; }
-      .p2-right           { align-items:flex-start; max-width:360px; order:2; }
-      .results-header     { text-align:left; margin-bottom:0; }
-      .results-header h1  { font-size:2.6rem; }
-      .divider            { margin:0 0 14px !important; }
-      .p2-actions         { justify-content:flex-start; gap:14px; margin-top:32px; }
+      /* Page 2 — centered column on desktop */
+      #page2              { justify-content:center; align-items:center; }
+      .p2-inner           { flex-direction:column; align-items:center; gap:24px; max-width:640px; }
+      .p2-wheel-col       { width:100%; }
+      .wheel-wrap         { max-width:580px; width:100%; }
+      .p2-right           { align-items:center; width:100%; }
+      .results-header     { text-align:center; margin-bottom:0; }
+      .results-header h1  { font-size:2.8rem; }
+      .divider            { margin:0 auto 14px !important; }
+      .p2-actions         { justify-content:center; gap:14px; }
       .btn-secondary      { padding:13px 40px; font-size:1rem; }
 
       /* Page 3 — trash LEFT, stickers RIGHT */
