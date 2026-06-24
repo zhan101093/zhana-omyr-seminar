@@ -354,7 +354,7 @@
     }
     .ground-leaf {
       position:relative;
-      width:150px; height:100px;
+      width:170px; height:115px;
       cursor:grab; touch-action:none; user-select:none;
       display:flex; align-items:center; justify-content:center;
       transition:transform .18s cubic-bezier(.34,1.56,.64,1);
@@ -367,12 +367,14 @@
     }
     .ground-leaf .lf-text {
       position:relative; z-index:1;
-      font-size:.62rem; font-weight:800;
+      font-size:.72rem; font-weight:800;
       color:#1a4a10; text-align:center;
-      line-height:1.25; padding:10px 10px;
-      max-width:100px; word-break:keep-all;
-      overflow-wrap:break-word;
-      text-shadow:0 0 4px rgba(255,255,255,.6);
+      line-height:1.3; padding:12px 14px;
+      max-width:140px;
+      word-break:keep-all;
+      overflow-wrap:normal;
+      hyphens:none;
+      text-shadow:0 0 6px rgba(255,255,255,.7);
     }
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
@@ -380,7 +382,7 @@
     /* Placed leaf on tree */
     .placed-leaf {
       position:absolute;
-      width:120px; height:80px;
+      width:140px; height:95px;
       display:flex; align-items:center; justify-content:center;
       animation:leafLand .5s cubic-bezier(.34,1.56,.64,1);
       pointer-events:none;
@@ -392,12 +394,14 @@
     }
     .placed-leaf .lf-text {
       position:relative; z-index:1;
-      font-size:.56rem; font-weight:800;
+      font-size:.68rem; font-weight:800;
       color:#0a3008; text-align:center;
-      line-height:1.2; padding:6px 6px;
-      max-width:82px; word-break:keep-all;
-      overflow-wrap:break-word;
-      text-shadow:0 0 3px rgba(255,255,255,.5);
+      line-height:1.3; padding:8px 10px;
+      max-width:120px;
+      word-break:keep-all;
+      overflow-wrap:normal;
+      hyphens:none;
+      text-shadow:0 0 4px rgba(255,255,255,.6);
     }
 
     .p4-back { margin-top:28px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
@@ -1041,7 +1045,7 @@ function onLeafEnd(e) {
 function placeLeaf(text, imgSrc, zoneRect, dropX, dropY) {
   const cont = document.getElementById('treeLeafContainer');
   const cr   = cont.getBoundingClientRect();
-  const w = 120, h = 80;
+  const w = 140, h = 95;
   const relX = Math.max(4, Math.min(dropX - cr.left - w/2, cr.width  - w - 4));
   const relY = Math.max(4, Math.min(dropY - cr.top  - h/2, cr.height - h - 4));
   const rot  = (Math.random() * 40 - 20).toFixed(0);
