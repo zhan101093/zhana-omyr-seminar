@@ -483,29 +483,10 @@
       <div class="trash-container" id="trashCan">
         <!-- sticker chips pile here, behind the basket SVG -->
         <div class="trash-inside" id="trashInside"></div>
-        <!-- wire basket SVG — front layer -->
-        <svg class="basket-svg" viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="wm" x="0" y="0" width="38" height="38" patternUnits="userSpaceOnUse">
-              <line x1="0" y1="38" x2="38" y2="0" stroke="#1a1a1a" stroke-width="3.2"/>
-              <line x1="0" y1="0" x2="38" y2="38" stroke="#1a1a1a" stroke-width="3.2"/>
-            </pattern>
-            <clipPath id="bc">
-              <rect x="17" y="48" width="166" height="164"/>
-            </clipPath>
-          </defs>
-          <!-- Mesh fill clipped to basket body -->
-          <rect x="0" y="0" width="200" height="250" fill="url(#wm)" clip-path="url(#bc)"/>
-          <!-- Side outlines -->
-          <line x1="17" y1="48" x2="17" y2="212" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"/>
-          <line x1="183" y1="48" x2="183" y2="212" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"/>
-          <!-- Bottom ellipse -->
-          <ellipse cx="100" cy="212" rx="83" ry="17" stroke="#1a1a1a" stroke-width="5"/>
-          <!-- Rim: white-filled ellipse (hides sticker tops = "inside" illusion) -->
-          <ellipse cx="100" cy="48" rx="86" ry="23" fill="white" stroke="#1a1a1a" stroke-width="7"/>
-          <!-- Rim inner shadow line -->
-          <ellipse cx="100" cy="51" rx="75" ry="16" stroke="#1a1a1a" stroke-width="3.5" fill="none" stroke-dasharray="0"/>
-        </svg>
+        <!-- Actual basket image — front layer -->
+        <img src="bag.png.jpg" alt="Қоқыс жәшігі" class="basket-svg"
+          style="object-fit:contain"
+          onerror="this.style.display='none'">
       </div>
       <div class="trash-label">Мұнда сүйреп тастаңыз</div>
     </div>
@@ -533,7 +514,7 @@
 
   <div class="tree-scene">
     <!-- ── Tree / basket image ── -->
-    <img src="tree.png" alt="Ағаш" id="treeImg"
+    <img src="tree.png.jpg" alt="Ағаш" id="treeImg"
       style="width:100%;height:auto;display:block;position:relative;z-index:1"
       onerror="this.style.display='none';document.getElementById('treeFallback').style.display='block'">
     <!-- Fallback SVG if image not found -->
