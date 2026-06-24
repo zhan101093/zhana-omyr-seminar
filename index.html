@@ -277,6 +277,96 @@
 
     .p3-back { margin-top:24px; display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
 
+    /* ══════════════════ PAGE 4 — TREE ══════════════════ */
+    #page4 {
+      background: linear-gradient(to bottom,
+        #c8e8f7 0%, #d8f0e8 38%,
+        #a0d090 55%, #78b060 70%,
+        #c8a060 82%, #a07840 100%);
+      min-height: 100vh;
+    }
+
+    .p4-header { text-align:center; margin-bottom:20px; }
+    .p4-header h2 {
+      font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:700;
+      background:linear-gradient(135deg,#2e7d32,#66bb6a);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      margin-bottom:6px;
+    }
+    .p4-header p { color:rgba(20,60,20,.65); font-size:.88rem; font-weight:400; }
+
+    .tree-scene {
+      position:relative; width:100%; max-width:480px;
+      margin:0 auto;
+    }
+
+    /* Drop zone overlay on tree canopy */
+    .tree-drop-zone {
+      position:absolute; top:0; left:0; right:0; height:72%;
+      z-index:3; border-radius:50%;
+      transition: box-shadow .2s;
+    }
+    .tree-drop-zone.tree-active {
+      box-shadow: inset 0 0 40px rgba(100,200,80,0.35);
+    }
+
+    /* Placed leaves on tree */
+    .tree-leaf-container {
+      position:absolute; top:0; left:0; right:0; height:72%;
+      pointer-events:none; z-index:2;
+      overflow:hidden;
+    }
+
+    .placed-leaf {
+      position:absolute;
+      width:68px; height:40px;
+      border-radius:50% 0 50% 0;
+      background:#4caf50;
+      border:2px solid #2e7d32;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center;
+      font-size:.6rem; font-weight:700; color:#fff;
+      padding:5px 4px; line-height:1.2;
+      animation: leafLand .5s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes leafLand {
+      from { transform:scale(0) rotate(0deg); opacity:0; }
+      to   { transform:scale(1) rotate(var(--lr)); opacity:1; }
+    }
+
+    /* Ground leaves */
+    .ground-section {
+      width:100%; max-width:480px;
+      margin:16px auto 0;
+    }
+    .ground-leaves {
+      display:flex; flex-wrap:wrap; gap:12px; justify-content:center;
+      background:rgba(255,255,255,.22); border-radius:20px;
+      padding:18px 14px; backdrop-filter:blur(6px);
+    }
+    .ground-leaf {
+      width:82px; height:50px;
+      border-radius:50% 0 50% 0;
+      background:#fff; border:2.5px solid #5a8040;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center;
+      font-size:.62rem; font-weight:700; color:#2a5a1a;
+      padding:6px 5px; line-height:1.3;
+      cursor:grab; touch-action:none; user-select:none;
+      transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s;
+    }
+    .ground-leaf:hover { transform:scale(1.1) rotate(6deg); box-shadow:0 6px 18px rgba(0,0,0,.2); }
+    .ground-leaf.gone  { visibility:hidden; }
+
+    .p4-back { margin-top:28px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+
+    @media(min-width:860px) {
+      .tree-scene, .ground-section { max-width:580px; }
+      .p4-header h2 { font-size:2.8rem; }
+      .ground-leaf  { width:90px; height:55px; font-size:.65rem; }
+      .placed-leaf  { width:76px; height:46px; font-size:.62rem; }
+    }
+
     /* ══ Tablet (≥600px) ══ */
     @media(min-width:600px) {
       .form-header h1 { font-size:2.8rem; }
@@ -301,8 +391,8 @@
       /* Page 2 — wheel left, text right */
       #page2              { justify-content:center; }
       .p2-inner           { flex-direction:row; align-items:center; gap:52px; }
-      .wheel-wrap         { max-width:540px; flex-shrink:0; }
-      .p2-right           { align-items:flex-start; max-width:360px; }
+      .wheel-wrap         { max-width:540px; flex-shrink:0; order:1; }
+      .p2-right           { align-items:flex-start; max-width:360px; order:2; }
       .results-header     { text-align:left; margin-bottom:0; }
       .results-header h1  { font-size:2.6rem; }
       .divider            { margin:0 0 14px !important; }
@@ -354,10 +444,7 @@
 <!-- ══════════ PAGE 2 — WHEEL ══════════ -->
 <div id="page2" class="page">
   <div class="p2-inner">
-    <div class="wheel-wrap">
-      <canvas id="wheelCanvas" width="500" height="500"
-        role="img" aria-label="Өмір балансы дөңгелегі диаграммасы"></canvas>
-    </div>
+    <!-- mobile: header first (top), desktop: goes right via CSS order -->
     <div class="p2-right">
       <header class="results-header">
         <div class="badge">💖 Сіздің Өмір Балансыңыз</div>
@@ -369,6 +456,10 @@
         <button type="button" class="btn-secondary" onclick="retake()">← Қайтадан бағалау</button>
         <button type="button" class="btn-primary" onclick="goToStickers()">Әрі қарай &rarr;</button>
       </div>
+    </div>
+    <div class="wheel-wrap">
+      <canvas id="wheelCanvas" width="500" height="500"
+        role="img" aria-label="Өмір балансы дөңгелегі диаграммасы"></canvas>
     </div>
   </div>
 </div>
@@ -428,6 +519,44 @@
   <div class="p3-back">
     <button type="button" class="btn-secondary" onclick="goBack()">← Артқа</button>
     <button type="button" class="btn-primary" onclick="restartAll()">Әрі қарай →</button>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 4 — TREE ══════════ -->
+<div id="page4" class="page">
+  <header class="p4-header">
+    <div class="badge">🌿 Өсу · Жаңару</div>
+    <h2>Менің ағашым</h2>
+    <div class="divider"></div>
+    <p>Жапырақты сүйреп ағашқа қойыңыз</p>
+  </header>
+
+  <div class="tree-scene">
+    <!-- ── Tree image — суретті жіберген соң осы SVG-ді <img> тагімен ауыстырамыз ── -->
+    <svg id="treeSvg" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
+      <rect x="122" y="282" width="56" height="98" rx="12" fill="#795548"/>
+      <rect x="128" y="282" width="44" height="98" rx="10" fill="#8d6e63"/>
+      <rect x="142" y="282" width="14" height="98" rx="7" fill="rgba(0,0,0,0.08)"/>
+      <ellipse cx="150" cy="215" rx="135" ry="95"  fill="#33691e"/>
+      <ellipse cx="150" cy="178" rx="118" ry="88"  fill="#558b2f"/>
+      <ellipse cx="150" cy="142" rx="100" ry="82"  fill="#689f38"/>
+      <ellipse cx="132" cy="112" rx="78"  ry="65"  fill="#7cb342"/>
+      <ellipse cx="122" cy="96"  rx="50"  ry="40"  fill="rgba(255,255,255,0.07)"/>
+    </svg>
+
+    <!-- Drop zone on canopy -->
+    <div class="tree-drop-zone" id="treeDropZone"></div>
+
+    <!-- Placed green leaves container -->
+    <div class="tree-leaf-container" id="treeLeafContainer"></div>
+  </div>
+
+  <div class="ground-section">
+    <div class="ground-leaves" id="groundLeaves"></div>
+  </div>
+
+  <div class="p4-back">
+    <button type="button" class="btn-secondary" onclick="goBackToP3()">← Артқа</button>
   </div>
 </div>
 
@@ -571,7 +700,6 @@ function buildStickers() {
   grid.innerHTML = '';
   const inside = document.getElementById('trashInside');
   if (inside) inside.innerHTML = '';
-  document.getElementById('doneMsg').style.display = 'none';
   grid.style.display = 'grid';
 
   STICKER_DATA.forEach((s) => {
@@ -719,17 +847,131 @@ function checkAllGone() {
 
 function restartAll() {
   window.scrollTo({ top:0, behavior:'smooth' });
-  localStorage.removeItem('wheel_scores');
-  scores.fill(1);
   document.getElementById('page3').classList.remove('active');
-  document.getElementById('page1').classList.add('active');
-  /* reset sliders */
-  CATS.forEach((cat, i) => {
-    scores[i] = 1;
-    const el = document.getElementById(`sl-${i}`);
-    const vEl = document.getElementById(`val-${i}`);
-    if (el && vEl) { el.value = 1; onSlider(i, el); }
+  document.getElementById('page4').classList.add('active');
+  buildLeaves();
+}
+
+function goBackToP3() {
+  window.scrollTo({ top:0, behavior:'smooth' });
+  document.getElementById('page4').classList.remove('active');
+  document.getElementById('page3').classList.add('active');
+}
+
+/* ════════════════════════════════
+   PAGE 4 — LEAF DATA & DRAG
+════════════════════════════════ */
+/* Жапырақ мәтіндері — кейін толтырылады */
+const LEAF_DATA = [
+  'Жапырақ 1', 'Жапырақ 2', 'Жапырақ 3',
+  'Жапырақ 4', 'Жапырақ 5', 'Жапырақ 6',
+  'Жапырақ 7', 'Жапырақ 8',
+];
+
+let leafEl = null, leafGhost = null, leafOX = 0, leafOY = 0;
+
+function buildLeaves() {
+  const grid = document.getElementById('groundLeaves');
+  grid.innerHTML = '';
+  document.getElementById('treeLeafContainer').innerHTML = '';
+
+  LEAF_DATA.forEach(text => {
+    const el = document.createElement('div');
+    el.className = 'ground-leaf';
+    el.textContent = text;
+    el.addEventListener('mousedown',  e => startLeafDrag(e, el));
+    el.addEventListener('touchstart', e => startLeafDrag(e, el), { passive: false });
+    grid.appendChild(el);
   });
+}
+
+function startLeafDrag(e, el) {
+  e.preventDefault();
+  const isTouch = e.type === 'touchstart';
+  const cx = isTouch ? e.touches[0].clientX : e.clientX;
+  const cy = isTouch ? e.touches[0].clientY : e.clientY;
+  const rect = el.getBoundingClientRect();
+  leafOX = cx - rect.left;
+  leafOY = cy - rect.top;
+
+  leafGhost = el.cloneNode(true);
+  Object.assign(leafGhost.style, {
+    position:'fixed', width:rect.width+'px', height:rect.height+'px',
+    left:(cx-leafOX)+'px', top:(cy-leafOY)+'px',
+    zIndex:'1000', pointerEvents:'none',
+    transform:'rotate(8deg) scale(1.12)',
+    boxShadow:'0 10px 30px rgba(0,0,0,.25)',
+    transition:'none', margin:'0',
+  });
+  document.body.appendChild(leafGhost);
+  el.style.opacity = '0.3';
+  leafEl = el;
+
+  if (isTouch) {
+    document.addEventListener('touchmove', onLeafMove, { passive: false });
+    document.addEventListener('touchend',  onLeafEnd);
+  } else {
+    document.addEventListener('mousemove', onLeafMove);
+    document.addEventListener('mouseup',   onLeafEnd);
+  }
+}
+
+function onLeafMove(e) {
+  if (!leafGhost) return;
+  e.preventDefault();
+  const isTouch = e.type === 'touchmove';
+  const cx = isTouch ? e.touches[0].clientX : e.clientX;
+  const cy = isTouch ? e.touches[0].clientY : e.clientY;
+  leafGhost.style.left = (cx - leafOX) + 'px';
+  leafGhost.style.top  = (cy - leafOY) + 'px';
+
+  const zone = document.getElementById('treeDropZone');
+  const zr   = zone.getBoundingClientRect();
+  const over = cx >= zr.left && cx <= zr.right && cy >= zr.top && cy <= zr.bottom;
+  zone.classList.toggle('tree-active', over);
+}
+
+function onLeafEnd(e) {
+  if (!leafGhost || !leafEl) return;
+  document.removeEventListener('mousemove', onLeafMove);
+  document.removeEventListener('mouseup',   onLeafEnd);
+  document.removeEventListener('touchmove', onLeafMove);
+  document.removeEventListener('touchend',  onLeafEnd);
+
+  const isTouch = e.type === 'touchend';
+  const cx = isTouch ? e.changedTouches[0].clientX : e.clientX;
+  const cy = isTouch ? e.changedTouches[0].clientY : e.clientY;
+
+  const zone = document.getElementById('treeDropZone');
+  const zr   = zone.getBoundingClientRect();
+  zone.classList.remove('tree-active');
+
+  const onTree = cx >= zr.left && cx <= zr.right && cy >= zr.top && cy <= zr.bottom;
+  if (onTree) {
+    placeLeaf(leafEl.textContent, zr, cx, cy);
+    leafEl.classList.add('gone');
+  } else {
+    leafEl.style.opacity = '1';
+  }
+  leafGhost.remove();
+  leafGhost = null; leafEl = null;
+}
+
+function placeLeaf(text, zoneRect, dropX, dropY) {
+  const cont = document.getElementById('treeLeafContainer');
+  const cr   = cont.getBoundingClientRect();
+  const relX = Math.max(4, Math.min(dropX - cr.left - 34, cr.width  - 76));
+  const relY = Math.max(4, Math.min(dropY - cr.top  - 20, cr.height - 48));
+  const rot  = (Math.random() * 50 - 25).toFixed(0);
+
+  const leaf = document.createElement('div');
+  leaf.className = 'placed-leaf';
+  leaf.textContent = text;
+  leaf.style.left = relX + 'px';
+  leaf.style.top  = relY + 'px';
+  leaf.style.setProperty('--lr', rot + 'deg');
+  leaf.style.transform = `rotate(${rot}deg)`;
+  cont.appendChild(leaf);
 }
 
 /* ════════════════════════════════
