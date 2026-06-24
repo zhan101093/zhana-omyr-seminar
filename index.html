@@ -394,13 +394,15 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf on tree */
+    /* Placed leaf on tree — white background prevents green tree showing through */
     .placed-leaf {
       position:absolute;
       width:140px; height:95px;
       display:flex; align-items:center; justify-content:center;
       animation:leafLand .5s cubic-bezier(.34,1.56,.64,1);
       pointer-events:none;
+      background:rgba(255,255,255,0.92);
+      border-radius:6px;
     }
     .placed-leaf img {
       position:absolute; inset:0;
@@ -423,19 +425,33 @@
     .p4-back { margin-top:28px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
 
     @media(min-width:860px) {
-      .p4-layout      { flex-direction:row; align-items:flex-start; gap:20px; flex-wrap:nowrap; }
-      .ground-left    { order:1; flex-shrink:0; max-width:230px; }
-      .tree-scene     { order:2; flex:0 0 420px; }
-      .ground-right   { order:3; flex-shrink:0; max-width:230px; }
+      .p4-layout {
+        flex-direction:row; align-items:flex-start;
+        gap:24px; flex-wrap:nowrap; justify-content:center;
+      }
+      .ground-left  { order:1; flex:0 0 auto; }
+      .tree-scene   { order:2; flex:0 0 400px; max-width:400px; }
+      .ground-right { order:3; flex:0 0 auto; display:flex; } /* shown on desktop */
+
+      /* 2 columns × 3 rows on each side */
       .ground-left .ground-leaves,
       .ground-right .ground-leaves {
-        flex-direction:column; align-items:center; gap:12px;
+        display:grid;
+        grid-template-columns:repeat(2,140px);
+        gap:12px;
         background:none; border-radius:0; padding:0; backdrop-filter:none;
       }
-      .p4-header h2   { font-size:2.6rem; }
-      .ground-leaf    { width:160px; height:108px; }
-      .ground-leaf .lf-text { font-size:.7rem; }
-      .placed-leaf    { width:140px; height:95px; }
+      /* reset mobile override */
+      .ground-left .ground-leaves .ground-leaf,
+      .ground-right .ground-leaves .ground-leaf {
+        width:140px; height:92px;
+      }
+      .ground-left .ground-leaves .ground-leaf .lf-text,
+      .ground-right .ground-leaves .ground-leaf .lf-text {
+        font-size:.68rem; padding:10px 10px; max-width:130px;
+      }
+      .p4-header h2 { font-size:2.6rem; }
+      .placed-leaf  { width:140px; height:92px; }
       .placed-leaf .lf-text { font-size:.64rem; }
     }
 
