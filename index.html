@@ -176,7 +176,7 @@
 
     .sticker {
       width:110px; height:110px;
-      border-radius:3px; padding:24px 9px 9px;
+      border-radius:3px; padding:20px 6px 6px;
       cursor:grab;
       display:flex; align-items:center; justify-content:center;
       text-align:center;
@@ -842,15 +842,16 @@ function goBack() {
 function fitText(el) {
   el.style.wordBreak = 'keep-all';
   el.style.overflowWrap = 'break-word';
-  let fs = 12;
+  el.style.lineHeight = '1.2';
+  let fs = 11;
   el.style.fontSize = fs + 'px';
-  while (el.scrollHeight > el.clientHeight && fs > 5.5) {
+  while (el.scrollHeight > el.clientHeight && fs > 4.5) {
     fs -= 0.5;
     el.style.fontSize = fs + 'px';
   }
   if (el.scrollHeight > el.clientHeight) {
     el.style.wordBreak = 'break-all';
-    while (el.scrollHeight > el.clientHeight && fs > 5) {
+    while (el.scrollHeight > el.clientHeight && fs > 4) {
       fs -= 0.5;
       el.style.fontSize = fs + 'px';
     }
