@@ -249,13 +249,14 @@
       overflow: hidden;
     }
 
-    /* SVG basket on top */
+    /* Basket image on top — multiply makes white transparent */
     .basket-svg {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       z-index: 2;
       pointer-events: none;
+      mix-blend-mode: multiply;
     }
     .trash-zone.drag-over .basket-svg {
       filter: drop-shadow(0 0 16px rgba(255,45,149,.55));
