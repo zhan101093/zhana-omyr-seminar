@@ -156,12 +156,12 @@
 
     .p3-header { text-align:center; margin-bottom:36px; }
     .p3-header h2 {
-      font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:700;
+      font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:700;
       background:linear-gradient(135deg,#FF2D95,#BB6BFF);
       -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
       margin-bottom:6px;
     }
-    .p3-header p { color:rgba(60,20,80,.58); font-size:.9rem; font-weight:300; }
+    .p3-header p { color:rgba(60,20,80,.58); font-size:.82rem; font-weight:300; }
 
     /* Mobile-first: column, trash below */
     .p3-layout {
@@ -292,12 +292,12 @@
 
     .p4-header { text-align:center; margin-bottom:20px; }
     .p4-header h2 {
-      font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:700;
+      font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:700;
       background:linear-gradient(135deg,#2e7d32,#66bb6a);
       -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-      margin-bottom:6px;
+      margin-bottom:4px;
     }
-    .p4-header p { color:rgba(20,60,20,.65); font-size:.88rem; font-weight:400; }
+    .p4-header p { color:rgba(20,60,20,.65); font-size:.8rem; font-weight:400; }
 
     .tree-scene {
       position:relative; width:100%; max-width:480px;
@@ -395,12 +395,11 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf — no background, keeps original leaf look */
+    /* Placed leaf — no animation, no scale change */
     .placed-leaf {
       position:absolute;
       width:140px; height:95px;
       display:flex; align-items:center; justify-content:center;
-      animation:leafLand .5s cubic-bezier(.34,1.56,.64,1);
       pointer-events:none;
     }
     .placed-leaf img {
@@ -449,7 +448,8 @@
       .ground-right .ground-leaves .ground-leaf .lf-text {
         font-size:.68rem; padding:10px 10px; max-width:130px;
       }
-      .p4-header h2 { font-size:2.6rem; }
+      .p3-header h2 { font-size:2.2rem; }
+      .p4-header h2 { font-size:2.4rem; }
       .placed-leaf  { width:140px; height:92px; }
       .placed-leaf .lf-text { font-size:.64rem; }
     }
@@ -497,7 +497,8 @@
       transition:border-color .2s, background .2s;
     }
     @media(min-width:860px) {
-      .letter-area { font-size:1.1rem; line-height:1.85; padding:22px 28px; }
+      .letter-card  { max-width:500px; }
+      .letter-area  { max-width:500px; font-size:1.05rem; line-height:1.8; padding:20px 24px; }
     }
     .letter-area::placeholder { color:rgba(120,60,140,0.4); font-style:italic; }
     .letter-area:focus {
@@ -793,6 +794,10 @@ function buildForm() {
     `;
     wrap.appendChild(card);
   });
+  /* fit text after layout is computed */
+  requestAnimationFrame(() => {
+    grid.querySelectorAll('.sticker').forEach(fitText);
+  });
 }
 
 function onSlider(i, el) {
@@ -882,7 +887,6 @@ function buildStickers() {
     el.addEventListener('mousedown',  e => beginDrag(e, el));
     el.addEventListener('touchstart', e => beginDrag(e, el), { passive: false });
     grid.appendChild(el);
-    fitText(el);
   });
 }
 
@@ -1124,9 +1128,10 @@ async function buildLeaves() {
     el.addEventListener('mousedown',  e => startLeafDrag(e, el));
     el.addEventListener('touchstart', e => startLeafDrag(e, el), { passive: false });
 
-    /* first 6 → left, last 6 → right; CSS hides right on mobile */
-    const target = (idx < 6 ? leftEl : rightEl) || leftEl;
-    if (target) target.appendChild(el);
+    /* mobile: all→left (right is CSS hidden); desktop: first 6→left, last 6→right */
+    const isMobile = window.innerWidth < 860;
+    const target = (isMobile || idx < 6) ? leftEl : (rightEl || leftEl);
+    target.appendChild(el);
   });
 }
 
