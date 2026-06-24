@@ -360,7 +360,6 @@
       role="img" aria-label="Өмір балансы дөңгелегі диаграммасы"></canvas>
   </div>
 
-  <div class="avg-box" id="avgBox"></div>
   <button type="button" class="btn-secondary" onclick="retake()">← Қайтадан бағалау</button>
 
 </div>
@@ -433,12 +432,6 @@ function showResults() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
   document.getElementById('page1').classList.remove('active');
   document.getElementById('page2').classList.add('active');
-
-  const avg = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
-  document.getElementById('avgBox').innerHTML = `
-    <div class="avg-num">${avg} / 10</div>
-    <div class="avg-label">Орташа баланс ұпайы</div>
-  `;
 
   setTimeout(drawWheel, 80);
 }
