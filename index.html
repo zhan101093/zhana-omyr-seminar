@@ -616,7 +616,7 @@
 <!-- ══════════ PAGE 3 — STICKERS ══════════ -->
 <div id="page3" class="page">
   <header class="p3-header">
-    <div class="badge">🗑️ Босату &nbsp;·&nbsp; Жіберіп жіберу</div>
+    <div class="badge">🗑️ Босату</div>
     <h2>Бойымдағы мен құтылғым келетін қасиеттер</h2>
     <div class="divider"></div>
     <p>Стиккерді басыңыз — қоқыс жәшігіне лақтырыңыз</p>
@@ -1098,8 +1098,10 @@ async function buildLeaves() {
 
   leftEl.innerHTML  = '';
   if (rightEl) rightEl.innerHTML = '';
-  const treeLeafCont = document.getElementById('treeLeafContainer');
-  if (treeLeafCont) treeLeafCont.innerHTML = '';
+  /* clear previously placed leaves from page5 */
+  document.getElementById('page5')
+    ?.querySelectorAll('.placed-leaf')
+    .forEach(el => el.remove());
 
   const [src1, src2] = await Promise.all([
     makeTransparent('list1.jpg'),
@@ -1201,21 +1203,25 @@ function onLeafEnd(e) {
 }
 
 function placeLeaf(text, imgSrc, zoneRect, dropX, dropY) {
-  const cont = document.getElementById('treeLeafContainer');
-  const cr   = cont.getBoundingClientRect();
+  /* Append to page5 directly — leaf background = page nature gradient,
+     same as ground leaf. No green/white discoloration. */
+  const page5 = document.getElementById('page5');
+  const pr    = page5.getBoundingClientRect();
   const w = 140, h = 95;
-  const relX = Math.max(4, Math.min(dropX - cr.left - w/2, cr.width  - w - 4));
-  const relY = Math.max(4, Math.min(dropY - cr.top  - h/2, cr.height - h - 4));
+  const relX = dropX - pr.left - w / 2;
+  const relY = dropY - pr.top  - h / 2;
   const rot  = (Math.random() * 40 - 20).toFixed(0);
 
   const leaf = document.createElement('div');
   leaf.className = 'placed-leaf';
+  leaf.style.position = 'absolute';
   leaf.style.left = relX + 'px';
   leaf.style.top  = relY + 'px';
+  leaf.style.zIndex = '20';
   leaf.style.setProperty('--lr', rot + 'deg');
   leaf.style.transform = `rotate(${rot}deg)`;
   leaf.innerHTML = `<img src="${imgSrc}" alt=""><span class="lf-text">${text}</span>`;
-  cont.appendChild(leaf);
+  page5.appendChild(leaf);
 }
 
 /* ════════════════════════════════
