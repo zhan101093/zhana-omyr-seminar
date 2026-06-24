@@ -263,9 +263,9 @@
 
       /* Page 2 — side-by-side */
       #page2             { justify-content:center; }
-      .p2-inner          { flex-direction:row; align-items:center; gap:56px; }
-      .wheel-wrap        { max-width:min(48vh, 500px); flex-shrink:0; }
-      .p2-right          { align-items:flex-start; max-width:380px; }
+      .p2-inner          { flex-direction:row; align-items:center; gap:52px; }
+      .wheel-wrap        { max-width:540px; flex-shrink:0; }
+      .p2-right          { align-items:flex-start; max-width:360px; }
       .results-header    { text-align:left; margin-bottom:0; }
       .results-header h1 { font-size:2.6rem; }
       .divider           { margin:0 0 14px !important; }
@@ -288,7 +288,7 @@
       .card-val          { font-size:2.5rem; }
       .icon-wrap         { width:44px; height:44px; font-size:1.35rem; }
       .slider-card       { padding:22px 28px 16px; }
-      .wheel-wrap        { max-width:min(50vh, 540px); }
+      .wheel-wrap        { max-width:640px; }
       .results-header h1 { font-size:3rem; }
       .p2-right          { max-width:420px; }
       #stickersGrid      { grid-template-columns:repeat(5,150px); }
@@ -696,7 +696,7 @@ function drawWheel() {
   ctx.scale(dpr, dpr);
 
   const W = cssW, cx = W/2, cy = W/2;
-  const maxR = W/2 - 68;
+  const maxR = W/2 - 82;
   const N = CATS.length, step = (2*Math.PI)/N, off = -Math.PI/2;
   const DUR = 1500; let start = null;
 
@@ -760,18 +760,31 @@ function drawWheel() {
     ctx.beginPath(); ctx.arc(cx,cy,12,0,2*Math.PI);
     ctx.fillStyle=jG; ctx.fill(); ctx.shadowBlur=0;
 
-    /* labels */
-    const labelR=maxR+46, fIcon=Math.round(W*.033), fText=Math.round(W*.022);
-    for (let i=0;i<N;i++) {
-      const mid=off+(i+.5)*step;
-      const lx=cx+labelR*Math.cos(mid), ly=cy+labelR*Math.sin(mid);
-      ctx.save(); ctx.translate(lx,ly);
-      ctx.font=`${fIcon}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillStyle='#1a0820'; ctx.fillText(CATS[i].icon, 0, -fIcon*.58);
-      ctx.shadowColor=CATS[i].color; ctx.shadowBlur=8;
-      ctx.fillStyle=CATS[i].color;
-      ctx.font=`600 ${fText}px DM Sans,sans-serif`;
-      ctx.fillText(CATS[i].short, 0, fIcon*.58); ctx.shadowBlur=0;
+    /* labels — icon + name on ONE line */
+    const labelR = maxR + 52;
+    const fLabel = Math.max(12, Math.round(W * 0.028));
+    for (let i = 0; i < N; i++) {
+      const mid = off + (i + .5) * step;
+      const lx  = cx + labelR * Math.cos(mid);
+      const ly  = cy + labelR * Math.sin(mid);
+      ctx.save();
+      ctx.translate(lx, ly);
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+
+      /* icon */
+      ctx.font      = `${Math.round(fLabel * 1.25)}px serif`;
+      ctx.fillStyle = '#1a0820';
+      ctx.fillText(CATS[i].icon, 0, -fLabel * 0.9);
+
+      /* short name — one line, bold, coloured */
+      ctx.shadowColor = CATS[i].color;
+      ctx.shadowBlur  = 6;
+      ctx.fillStyle   = CATS[i].color;
+      ctx.font        = `700 ${fLabel}px DM Sans,sans-serif`;
+      ctx.fillText(CATS[i].short, 0, fLabel * 0.7);
+      ctx.shadowBlur  = 0;
+
       ctx.restore();
     }
 
