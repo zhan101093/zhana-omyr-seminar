@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Өмір Балансы Дөңгелегі</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --c1: #FFD700;   /* Алла      — алтын        */
+      --c2: #00F5A0;   /* Денсаулық — жарқын жасыл */
+      --c3: #FF2D95;   /* Күйеу     — неон-роза    */
+      --c4: #BB6BFF;   /* Балалар   — жарқын лаванда */
+      --c5: #FF7B3D;   /* Қаржы     — жарқын апельсин */
+      --c6: #FF00CC;   /* Әлеует    — неон-маджента */
+      --c7: #00D4FF;   /* Демалыс   — неон-көк     */
+      --c8: #FF4D6D;   /* Даму      — ашық қызыл-роза */
+
+      --bg:   #ffffff;
+      --card: rgba(0,0,0,0.03);
+      --card-hover: rgba(0,0,0,0.06);
+      --border: rgba(0,0,0,0.09);
+      --border-hover: rgba(0,0,0,0.18);
+      --text: #1a0820;
+      --text-muted: rgba(60,20,80,0.62);
+      --text-subtle: rgba(60,20,80,0.32);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', 'Segoe UI', sans-serif;
+      background: #ffffff;
+      min-height: 100vh;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── Glow blobs on black ── */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: .55;
+    }
+    .blob-a {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, #FF2D9540, transparent 70%);
+      top: -180px; right: -160px;
+      animation: drift 10s ease-in-out infinite alternate;
+    }
+    .blob-b {
+      width: 440px; height: 440px;
+      background: radial-gradient(circle, #BB6BFF40, transparent 70%);
+      bottom: -140px; left: -140px;
+      animation: drift 12s ease-in-out infinite alternate-reverse;
+    }
+    .blob-c {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, #00D4FF30, transparent 70%);
+      top: 40%; left: 46%;
+      animation: drift 8s ease-in-out infinite alternate;
+    }
+    @keyframes drift { to { transform: translate(28px, -28px) scale(1.1); } }
+
+    /* ── Pages ── */
+    .page {
+      display: none;
+      min-height: 100vh;
+      padding: 44px 20px 64px;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .page.active { display: flex; }
+
+    /* ═══════════════════════════
+       PAGE 1 — FORM
+    ═══════════════════════════ */
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,45,149,0.12);
+      border: 1px solid rgba(255,45,149,0.35);
+      border-radius: 50px;
+      padding: 6px 18px;
+      font-size: .75rem;
+      font-weight: 500;
+      color: #FF80C0;
+      letter-spacing: .6px;
+      margin-bottom: 18px;
+    }
+
+    .form-header { text-align: center; margin-bottom: 38px; }
+
+    .form-header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #FFD700 0%, #FF2D95 45%, #BB6BFF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .divider {
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, #FF2D95, #BB6BFF);
+      border-radius: 2px;
+      margin: 0 auto 14px;
+      box-shadow: 0 0 12px #FF2D9580;
+    }
+
+    .form-header p { color: var(--text-muted); font-size: .9rem; font-weight: 300; }
+
+    /* Cards */
+    .form-container { width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 10px; }
+
+    .slider-card {
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 22px 14px;
+      transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .22s, border-color .22s, background .22s;
+    }
+    .slider-card:hover {
+      transform: translateY(-3px);
+      background: var(--card-hover);
+      border-color: var(--border-hover);
+    }
+
+    .card-top {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 12px; margin-bottom: 13px;
+    }
+    .card-label { display: flex; align-items: center; gap: 11px; flex: 1; min-width: 0; }
+
+    .icon-wrap {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .card-name {
+      font-size: .875rem; font-weight: 500;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.35;
+    }
+
+    .card-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem; font-weight: 700;
+      min-width: 52px; text-align: right;
+      flex-shrink: 0; line-height: 1;
+    }
+
+    /* Slider */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%; height: 5px;
+      border-radius: 3px; outline: none; cursor: pointer;
+      transition: height .12s;
+    }
+    input[type="range"]:hover { height: 8px; }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2.5px solid #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,.6);
+      cursor: pointer;
+      transition: transform .15s, box-shadow .18s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.3);
+      box-shadow: 0 4px 20px rgba(0,0,0,.5), 0 0 20px currentColor;
+    }
+    input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.08); }
+    input[type="range"]::-moz-range-thumb {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2.5px solid #fff;
+      cursor: pointer;
+    }
+    input[type="range"]:focus-visible { outline: 2px solid #FF2D95; outline-offset: 4px; border-radius: 3px; }
+
+    .scale-marks {
+      display: flex; justify-content: space-between;
+      margin-top: 6px; padding: 0 1px;
+    }
+    .scale-marks span { font-size: .62rem; color: var(--text-subtle); }
+
+    /* Submit */
+    .submit-area { margin-top: 28px; text-align: center; }
+
+    .btn-primary {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #FF2D95 0%, #BB6BFF 100%);
+      color: #fff; border: none;
+      padding: 16px 58px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-weight: 600;
+      border-radius: 50px; cursor: pointer;
+      box-shadow: 0 0 40px rgba(255,45,149,.5), 0 4px 24px rgba(255,45,149,.35);
+      transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .22s;
+      letter-spacing: .3px;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.18), transparent);
+      opacity: 0; transition: opacity .2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 60px rgba(255,45,149,.7), 0 8px 36px rgba(255,45,149,.5);
+    }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:active { transform: translateY(-1px); }
+    .btn-primary:focus-visible { outline: 2px solid #FF80C0; outline-offset: 4px; }
+
+    /* ═══════════════════════════
+       PAGE 2 — RESULTS
+    ═══════════════════════════ */
+
+    .results-header { text-align: center; margin-bottom: 20px; }
+    .results-header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.1rem; font-weight: 700;
+      background: linear-gradient(135deg, #FFD700 0%, #FF2D95 45%, #BB6BFF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+    .results-header p { color: var(--text-muted); font-size: .84rem; font-weight: 300; }
+
+    .wheel-wrap { width: 100%; max-width: 460px; }
+    #wheelCanvas { width: 100%; height: auto; display: block; }
+
+    .avg-box { text-align: center; margin: 14px 0 22px; }
+    .avg-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.4rem; font-weight: 700;
+      background: linear-gradient(135deg, #FF2D95, #BB6BFF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      filter: drop-shadow(0 0 18px rgba(255,45,149,.4));
+    }
+    .avg-label { font-size: .78rem; color: var(--text-subtle); letter-spacing: .4px; margin-top: 4px; }
+
+    /* Legend */
+    .legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 460px; width: 100%; }
+
+    .leg-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 13px;
+      transition: background .2s, border-color .2s, transform .2s;
+    }
+    .leg-item:hover {
+      background: var(--card-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+    .leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .leg-info { flex: 1; min-width: 0; }
+    .leg-name { font-size: .68rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .leg-score { font-size: .93rem; font-weight: 600; }
+
+    .btn-secondary {
+      margin-top: 22px;
+      background: rgba(255,255,255,.05);
+      color: rgba(255,255,255,.75);
+      border: 1px solid rgba(255,255,255,.14);
+      padding: 11px 36px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; font-weight: 500;
+      border-radius: 50px; cursor: pointer;
+      transition: background .2s, border-color .2s, color .2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,.1);
+      border-color: rgba(255,255,255,.28);
+      color: #fff;
+    }
+    .btn-secondary:focus-visible { outline: 2px solid #FF2D95; outline-offset: 4px; }
+
+    @media (max-width: 480px) {
+      .form-header h1 { font-size: 2.2rem; }
+      .legend { grid-template-columns: 1fr; }
+      .card-name { font-size: .81rem; }
+      .btn-primary { padding: 14px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="blob blob-a" aria-hidden="true"></div>
+<div class="blob blob-b" aria-hidden="true"></div>
+<div class="blob blob-c" aria-hidden="true"></div>
+
+<!-- ═══════════ PAGE 1 ═══════════ -->
+<div id="page1" class="page active">
+
+  <header class="form-header">
+    <div class="badge">✨ Өзіңізді тану &nbsp;·&nbsp; Өсу &nbsp;·&nbsp; Баланс</div>
+    <h1>Өмір Балансы<br>Дөңгелегі</h1>
+    <div class="divider"></div>
+    <p>Әрбір саладағы деңгейіңізді 1-ден 10-ға дейін бағалаңыз</p>
+  </header>
+
+  <div class="form-container" id="formContainer"></div>
+
+  <div class="submit-area">
+    <button type="button" class="btn-primary" onclick="showResults()">
+      Дөңгелекті көру &nbsp;✨
+    </button>
+  </div>
+
+</div>
+
+<!-- ═══════════ PAGE 2 ═══════════ -->
+<div id="page2" class="page">
+
+  <header class="results-header">
+    <div class="badge">💖 Сіздің Өмір Балансыңыз</div>
+    <h1>Өмір Балансы Дөңгелегі</h1>
+    <div class="divider"></div>
+    <p>Сіздің өмір балансыңыздың бейнесі</p>
+  </header>
+
+  <div class="wheel-wrap">
+    <canvas id="wheelCanvas" width="500" height="500"
+      role="img" aria-label="Өмір балансы дөңгелегі диаграммасы"></canvas>
+  </div>
+
+  <div class="avg-box" id="avgBox"></div>
+  <div class="legend" id="legend"></div>
+  <button type="button" class="btn-secondary" onclick="retake()">← Қайтадан бағалау</button>
+
+</div>
+
+<script>
+const CATS = [
+  { name: 'Алламен байланысыңыз',                    short: 'Алла',     icon: '🤲', color: '#FFD700' },
+  { name: 'Денсаулығыңыз',                            short: 'Денсаулық', icon: '🌿', color: '#00F5A0' },
+  { name: 'Күйеуіңізбен қарым-қатынасыңыз',          short: 'Күйеу',    icon: '💑', color: '#FF2D95' },
+  { name: 'Балаларыңызбен қарым-қатынасыңыз',        short: 'Балалар',  icon: '👨‍👩‍👧', color: '#BB6BFF' },
+  { name: 'Қаржылық жағдайыңыз',                     short: 'Қаржы',    icon: '💎', color: '#FF7B3D' },
+  { name: 'Әлеуметтік ортадағы орныңыз',             short: 'Әлеует',   icon: '🤝', color: '#FF00CC' },
+  { name: 'Уақытылы демалу көрсеткішіңіз',           short: 'Демалыс',  icon: '🌙', color: '#00D4FF' },
+  { name: 'Өзіңізбен жұмыс жасап, даму деңгейіңіз', short: 'Даму',     icon: '🌸', color: '#FF4D6D' },
+];
+
+const scores = new Array(CATS.length).fill(5);
+
+/* Per-slider thumb colours */
+(function () {
+  const s = document.createElement('style');
+  s.textContent = CATS.map((c, i) =>
+    `#sl-${i}::-webkit-slider-thumb{background:${c.color};box-shadow:0 0 10px ${c.color}80;}` +
+    `#sl-${i}::-moz-range-thumb{background:${c.color};}`
+  ).join('');
+  document.head.appendChild(s);
+})();
+
+function pct(v) { return ((v - 1) / 9 * 100).toFixed(2) + '%'; }
+
+function buildForm() {
+  const wrap = document.getElementById('formContainer');
+  CATS.forEach((cat, i) => {
+    const card = document.createElement('div');
+    card.className = 'slider-card';
+    card.style.borderLeft = `3px solid ${cat.color}`;
+    card.style.boxShadow = `inset 3px 0 20px ${cat.color}10`;
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="card-label">
+          <div class="icon-wrap" style="background:${cat.color}15;border-color:${cat.color}40">
+            ${cat.icon}
+          </div>
+          <span class="card-name">${cat.name}</span>
+        </div>
+        <span class="card-val" id="val-${i}" style="color:${cat.color};text-shadow:0 0 18px ${cat.color}80">5</span>
+      </div>
+      <input type="range" id="sl-${i}" min="1" max="10" value="5"
+        aria-label="${cat.name} бойынша баға"
+        style="background:linear-gradient(to right,${cat.color} ${pct(5)},rgba(0,0,0,0.10) ${pct(5)})"
+        oninput="onSlider(${i},this)">
+      <div class="scale-marks" aria-hidden="true">
+        ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<span>${n}</span>`).join('')}
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+function onSlider(i, el) {
+  const v = parseInt(el.value);
+  scores[i] = v;
+  const valEl = document.getElementById(`val-${i}`);
+  valEl.textContent = v;
+  el.style.background =
+    `linear-gradient(to right,${CATS[i].color} ${pct(v)},rgba(0,0,0,0.10) ${pct(v)})`;
+}
+
+function showResults() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById('page1').classList.remove('active');
+  document.getElementById('page2').classList.add('active');
+
+  const avg = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
+  document.getElementById('avgBox').innerHTML = `
+    <div class="avg-num">${avg} / 10</div>
+    <div class="avg-label">Орташа баланс ұпайы</div>
+  `;
+
+  document.getElementById('legend').innerHTML = CATS.map((c, i) => `
+    <div class="leg-item" style="border-left:3px solid ${c.color}">
+      <div class="leg-dot" style="background:${c.color};box-shadow:0 0 10px ${c.color}"></div>
+      <div class="leg-info">
+        <div class="leg-name">${c.icon} ${c.name}</div>
+        <div class="leg-score" style="color:${c.color}">${scores[i]} / 10</div>
+      </div>
+    </div>
+  `).join('');
+
+  setTimeout(drawWheel, 80);
+}
+
+function retake() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById('page2').classList.remove('active');
+  document.getElementById('page1').classList.add('active');
+}
+
+/* ════════════════════════
+   WHEEL
+════════════════════════ */
+function drawWheel() {
+  const canvas = document.getElementById('wheelCanvas');
+  const dpr  = window.devicePixelRatio || 1;
+  const cssW = canvas.clientWidth || 500;
+  canvas.width  = cssW * dpr;
+  canvas.height = cssW * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const W  = cssW;
+  const cx = W / 2, cy = W / 2;
+  const maxR = W / 2 - 68;
+  const N    = CATS.length;
+  const step = (2 * Math.PI) / N;
+  const off  = -Math.PI / 2;
+
+  const DUR = 1500;
+  let start = null;
+
+  function ease(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function frame(ts) {
+    if (!start) start = ts;
+    const p = ease(Math.min((ts - start) / DUR, 1));
+
+    ctx.clearRect(0, 0, W, W);
+
+    /* Background disc */
+    ctx.beginPath();
+    ctx.arc(cx, cy, maxR, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(0,0,0,0.03)';
+    ctx.fill();
+
+    /* Concentric rings */
+    for (let r = 1; r <= 10; r++) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, maxR * r / 10, 0, 2 * Math.PI);
+      ctx.strokeStyle = r % 2 === 0
+        ? 'rgba(255,255,255,0.12)'
+        : 'rgba(255,255,255,0.04)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    /* Spokes */
+    for (let i = 0; i < N; i++) {
+      const a = off + i * step;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + maxR * Math.cos(a), cy + maxR * Math.sin(a));
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    /* Filled segments */
+    for (let i = 0; i < N; i++) {
+      const sa  = off + i * step;
+      const ea  = sa + step;
+      const mid = sa + step / 2;
+      const r   = scores[i] / 10 * maxR * p;
+
+      /* Glow */
+      ctx.shadowColor = CATS[i].color;
+      ctx.shadowBlur  = 28 * p;
+
+      /* Fill */
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, sa, ea);
+      ctx.closePath();
+
+      const grd = ctx.createRadialGradient(
+        cx, cy, 0,
+        cx + r * 0.5 * Math.cos(mid),
+        cy + r * 0.5 * Math.sin(mid), r
+      );
+      grd.addColorStop(0,    CATS[i].color + '22');
+      grd.addColorStop(0.5,  CATS[i].color + '99');
+      grd.addColorStop(1,    CATS[i].color + 'EE');
+      ctx.fillStyle = grd;
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+
+      /* Arc border */
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, sa, ea);
+      ctx.strokeStyle = CATS[i].color;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      /* Score inside */
+      if (scores[i] >= 3 && p > 0.52) {
+        const lr = r * 0.6;
+        const lx = cx + lr * Math.cos(mid);
+        const ly = cy + lr * Math.sin(mid);
+        ctx.shadowColor = CATS[i].color;
+        ctx.shadowBlur  = 10;
+        ctx.fillStyle = '#fff';
+        ctx.font = `700 ${Math.round(W * 0.028)}px DM Sans, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(scores[i], lx, ly);
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    /* Centre gem */
+    const jG = ctx.createRadialGradient(cx - 3, cy - 3, 1, cx, cy, 13);
+    jG.addColorStop(0,   '#fff');
+    jG.addColorStop(0.4, '#FF80C0');
+    jG.addColorStop(1,   '#BB6BFF');
+    ctx.shadowColor = '#FF2D95';
+    ctx.shadowBlur  = 20;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 12, 0, 2 * Math.PI);
+    ctx.fillStyle = jG;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    /* Outer labels */
+    const labelR = maxR + 46;
+    const fIcon  = Math.round(W * 0.033);
+    const fText  = Math.round(W * 0.022);
+
+    for (let i = 0; i < N; i++) {
+      const mid = off + (i + 0.5) * step;
+      const lx  = cx + labelR * Math.cos(mid);
+      const ly  = cy + labelR * Math.sin(mid);
+
+      ctx.save();
+      ctx.translate(lx, ly);
+
+      /* icon */
+      ctx.font = `${fIcon}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#1a0820';
+      ctx.fillText(CATS[i].icon, 0, -fIcon * 0.58);
+
+      /* name */
+      ctx.shadowColor = CATS[i].color;
+      ctx.shadowBlur  = 8;
+      ctx.fillStyle = CATS[i].color;
+      ctx.font = `600 ${fText}px DM Sans, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(CATS[i].short, 0, fIcon * 0.58);
+      ctx.shadowBlur = 0;
+
+      ctx.restore();
+    }
+
+    if (p < 1) requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+}
+
+buildForm();
+</script>
+</body>
+</html>
