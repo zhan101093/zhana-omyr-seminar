@@ -484,20 +484,21 @@
       background-clip:text; margin-bottom:12px;
     }
     .letter-area {
-      width:100%; max-width:320px;
-      min-height:42vh;
+      width:220px; height:54vh;
+      max-height:480px;
       background:transparent;
       border:none; outline:none;
-      padding:8px 10px;
+      padding:6px 8px;
       font-family:'Cormorant Garamond',serif;
       font-style:italic;
-      font-size:.9rem; line-height:1.5;
+      font-size:.85rem; line-height:1.5;
       color:rgba(120,60,140,0.9);
       resize:none;
+      display:block; margin:0 auto;
     }
     @media(min-width:860px) {
-      .letter-content { padding:10vh 20px 50px; }
-      .letter-area    { max-width:380px; min-height:48vh; font-size:1rem; line-height:1.6; }
+      .letter-content { padding:9vh 20px 50px; }
+      .letter-area    { width:260px; height:56vh; max-height:520px; font-size:.92rem; }
     }
     .letter-area::placeholder { color:rgba(120,60,140,0.35); font-style:italic; }
     .letter-area:focus {
