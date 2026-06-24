@@ -395,12 +395,14 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf — no animation, no scale change */
+    /* Placed leaf — cream bg prevents green from bleeding through */
     .placed-leaf {
       position:absolute;
       width:140px; height:95px;
       display:flex; align-items:center; justify-content:center;
       pointer-events:none;
+      background:rgba(255,252,240,0.88);
+      border-radius:4px;
     }
     .placed-leaf img {
       position:absolute; inset:0;
@@ -463,16 +465,16 @@
     .letter-bg-img {
       position:absolute;
       top:0; left:0; width:100%; height:100%;
-      object-fit:cover;
-      object-position:center;
+      object-fit:contain;
+      object-position:center top;
       z-index:0;
     }
     .letter-content {
       position:relative; z-index:1;
       width:100%; min-height:100vh;
       display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      padding:44px 20px 50px;
+      align-items:center; justify-content:flex-start;
+      padding:6vh 20px 50px;
     }
     .letter-title {
       font-family:'Cormorant Garamond',serif;
@@ -482,25 +484,22 @@
       background-clip:text; margin-bottom:12px;
     }
     .letter-area {
-      width:100%; max-width:580px;
-      min-height:55vh;
-      background:rgba(255,255,255,0.15);
-      border:1.5px solid rgba(255,160,210,0.3);
-      border-radius:16px;
-      backdrop-filter:blur(4px);
-      padding:16px 18px;
+      width:100%; max-width:320px;
+      min-height:42vh;
+      background:transparent;
+      border:none; outline:none;
+      padding:8px 10px;
       font-family:'Cormorant Garamond',serif;
       font-style:italic;
-      font-size:.95rem; line-height:1.55;
-      color:rgba(120,60,140,0.85);
-      resize:vertical; outline:none;
-      transition:border-color .2s, background .2s;
+      font-size:.9rem; line-height:1.5;
+      color:rgba(120,60,140,0.9);
+      resize:none;
     }
     @media(min-width:860px) {
-      .letter-card  { max-width:500px; }
-      .letter-area  { max-width:500px; font-size:1.05rem; line-height:1.8; padding:20px 24px; }
+      .letter-content { padding:10vh 20px 50px; }
+      .letter-area    { max-width:380px; min-height:48vh; font-size:1rem; line-height:1.6; }
     }
-    .letter-area::placeholder { color:rgba(120,60,140,0.4); font-style:italic; }
+    .letter-area::placeholder { color:rgba(120,60,140,0.35); font-style:italic; }
     .letter-area:focus {
       border-color:rgba(255,45,149,0.4);
       background:rgba(255,255,255,0.22);
@@ -728,7 +727,7 @@
 
     <div class="phone-section">
       <p class="phone-info">
-        Номерін қалдырған адамдарға 6 айдан кейін<br>сізге хатты жіберетін боламыз 💌
+        Номерін қалдырған ханымдарға 6 айдан кейін осы хатты жіберетін боламыз 💌
       </p>
       <div class="phone-row">
         <input type="tel" id="phoneInput" class="phone-input"
@@ -863,10 +862,10 @@ function buildForm() {
     `;
     wrap.appendChild(card);
   });
-  /* fit text after layout is computed */
-  requestAnimationFrame(() => {
+  /* fit text after layout is fully computed */
+  setTimeout(() => {
     grid.querySelectorAll('.sticker').forEach(fitText);
-  });
+  }, 120);
 }
 
 function onSlider(i, el) {
