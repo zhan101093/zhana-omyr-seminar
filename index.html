@@ -93,7 +93,7 @@
       padding: 6px 18px;
       font-size: .75rem;
       font-weight: 500;
-      color: #FF80C0;
+      color: #CC0060;
       letter-spacing: .6px;
       margin-bottom: 18px;
     }
@@ -105,7 +105,7 @@
       font-size: 3rem;
       font-weight: 700;
       line-height: 1.1;
-      background: linear-gradient(135deg, #FFD700 0%, #FF2D95 45%, #BB6BFF 100%);
+      background: linear-gradient(135deg, #FF2D95 0%, #CC0060 45%, #BB6BFF 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -152,12 +152,12 @@
       border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.2rem; flex-shrink: 0;
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(0,0,0,0.10);
     }
 
     .card-name {
       font-size: .875rem; font-weight: 500;
-      color: rgba(255,255,255,0.88);
+      color: #1a0820;
       line-height: 1.35;
     }
 
@@ -243,7 +243,7 @@
     .results-header h1 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 2.1rem; font-weight: 700;
-      background: linear-gradient(135deg, #FFD700 0%, #FF2D95 45%, #BB6BFF 100%);
+      background: linear-gradient(135deg, #FF2D95 0%, #CC0060 45%, #BB6BFF 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -290,9 +290,9 @@
 
     .btn-secondary {
       margin-top: 22px;
-      background: rgba(255,255,255,.05);
-      color: rgba(255,255,255,.75);
-      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,0.04);
+      color: #3a1a50;
+      border: 1px solid rgba(0,0,0,0.15);
       padding: 11px 36px;
       font-family: 'DM Sans', sans-serif;
       font-size: .9rem; font-weight: 500;
@@ -300,9 +300,9 @@
       transition: background .2s, border-color .2s, color .2s;
     }
     .btn-secondary:hover {
-      background: rgba(255,255,255,.1);
-      border-color: rgba(255,255,255,.28);
-      color: #fff;
+      background: rgba(255,45,149,0.08);
+      border-color: rgba(255,45,149,0.3);
+      color: #CC0060;
     }
     .btn-secondary:focus-visible { outline: 2px solid #FF2D95; outline-offset: 4px; }
 
@@ -496,8 +496,8 @@ function drawWheel() {
       ctx.beginPath();
       ctx.arc(cx, cy, maxR * r / 10, 0, 2 * Math.PI);
       ctx.strokeStyle = r % 2 === 0
-        ? 'rgba(255,255,255,0.12)'
-        : 'rgba(255,255,255,0.04)';
+        ? 'rgba(0,0,0,0.12)'
+        : 'rgba(0,0,0,0.04)';
       ctx.lineWidth = 1;
       ctx.stroke();
     }
@@ -508,7 +508,7 @@ function drawWheel() {
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(cx + maxR * Math.cos(a), cy + maxR * Math.sin(a));
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.strokeStyle = 'rgba(0,0,0,0.10)';
       ctx.lineWidth = 1;
       ctx.stroke();
     }
