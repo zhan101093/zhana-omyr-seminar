@@ -29,6 +29,7 @@
       min-height: 100vh;
       color: var(--text);
       overflow-x: hidden;
+      overscroll-behavior: none;
     }
 
     /* ── Blobs ── */
@@ -172,14 +173,18 @@
 
     .sticker {
       width:140px; height:140px;
-      border-radius:3px; padding:16px 14px;
-      cursor:pointer;
+      border-radius:3px; padding:28px 10px 10px;
+      cursor:grab;
       display:flex; align-items:center; justify-content:center;
       text-align:center;
-      font-size:.8rem; font-weight:600; line-height:1.45;
+      font-size:.78rem; font-weight:600; line-height:1.4;
       color:rgba(30,10,40,.78);
       box-shadow: none;
-      transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s;
+      overflow:hidden;
+      overflow-wrap:break-word;
+      word-break:break-word;
+      touch-action:none;
+      transition:transform .18s cubic-bezier(.34,1.56,.64,1);
       position:relative; user-select:none;
     }
     .sticker:hover { transform:scale(1.07) rotate(2deg); box-shadow:6px 10px 28px rgba(0,0,0,.22); z-index:10; }
@@ -294,15 +299,15 @@
     /* ══ Mobile ══ */
     @media(max-width:700px) {
       .p3-layout   { flex-direction:column; align-items:center; gap:24px; }
-      #stickersGrid { grid-template-columns:repeat(3,100px); gap:12px; }
-      .sticker      { width:100px; height:100px; font-size:.7rem; padding:10px 8px; }
+      #stickersGrid { grid-template-columns:repeat(3,115px); gap:10px; }
+      .sticker      { width:115px; height:115px; padding:26px 9px 9px; }
       .trash-zone   { flex-direction:row; gap:16px; padding:16px 24px; min-width:unset; width:100%; max-width:340px; justify-content:center; }
       .trash-can    { font-size:4rem; }
     }
     @media(max-width:420px) {
       .form-header h1 { font-size:2.2rem; }
-      #stickersGrid   { grid-template-columns:repeat(3,88px); gap:10px; }
-      .sticker        { width:88px; height:88px; font-size:.65rem; }
+      #stickersGrid   { grid-template-columns:repeat(3,105px); gap:8px; }
+      .sticker        { width:105px; height:105px; padding:24px 8px 8px; }
     }
   </style>
 </head>
@@ -499,6 +504,16 @@ function goBack() {
   document.getElementById('page2').classList.add('active');
 }
 
+/* auto-fit text inside sticker */
+function fitText(el) {
+  let fs = 13;
+  el.style.fontSize = fs + 'px';
+  while (el.scrollHeight > el.clientHeight && fs > 7) {
+    fs -= 0.5;
+    el.style.fontSize = fs + 'px';
+  }
+}
+
 /* ── Drag state ── */
 let dragEl   = null;   // original sticker being dragged
 let dragGhost = null;  // floating clone following cursor
@@ -522,6 +537,7 @@ function buildStickers() {
     el.addEventListener('mousedown',  e => beginDrag(e, el));
     el.addEventListener('touchstart', e => beginDrag(e, el), { passive: false });
     grid.appendChild(el);
+    fitText(el);
   });
 }
 
