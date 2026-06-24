@@ -339,14 +339,23 @@
       display:flex; flex-direction:column; align-items:center;
       width:100%; max-width:1100px; gap:20px;
     }
-    /* mobile: tree top, leaves below in 3-col grid */
+    /* mobile: tree top, leaves in 3-col grid below */
     .tree-scene   { order:-1; }
     .ground-left  { order:1; width:100%; }
     .ground-right { display:none; }
     .ground-left .ground-leaves {
       display:grid;
       grid-template-columns:repeat(3,1fr);
-      gap:10px;
+      gap:8px;
+      background:rgba(255,255,255,.18);
+      border-radius:16px; padding:10px;
+    }
+    /* leaf fills its grid cell on mobile */
+    .ground-left .ground-leaves .ground-leaf {
+      width:100%; height:72px;
+    }
+    .ground-left .ground-leaves .ground-leaf .lf-text {
+      font-size:.6rem; padding:6px 5px; max-width:100%;
     }
 
     /* Ground leaves — transparent image cards */
@@ -397,7 +406,7 @@
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit:contain;
-      mix-blend-mode: multiply; /* removes white background, keeps leaf colors */
+      /* transparent PNG — no blend mode needed */
     }
     .placed-leaf .lf-text {
       position:relative; z-index:1;
@@ -735,20 +744,19 @@ function goBack() {
   document.getElementById('page2').classList.add('active');
 }
 
-/* auto-fit text inside sticker — shrink until it fits */
+/* auto-fit text inside sticker */
 function fitText(el) {
-  let fs = 13;
-  el.style.fontSize = fs + 'px';
   el.style.wordBreak = 'keep-all';
   el.style.overflowWrap = 'break-word';
-  while (el.scrollHeight > el.clientHeight && fs > 7) {
+  let fs = 12;
+  el.style.fontSize = fs + 'px';
+  while (el.scrollHeight > el.clientHeight && fs > 5.5) {
     fs -= 0.5;
     el.style.fontSize = fs + 'px';
   }
-  /* if still doesn't fit, allow word break */
   if (el.scrollHeight > el.clientHeight) {
     el.style.wordBreak = 'break-all';
-    while (el.scrollHeight > el.clientHeight && fs > 6) {
+    while (el.scrollHeight > el.clientHeight && fs > 5) {
       fs -= 0.5;
       el.style.fontSize = fs + 'px';
     }
@@ -1070,7 +1078,7 @@ function onLeafEnd(e) {
 
   const onTree = cx >= zr.left && cx <= zr.right && cy >= zr.top && cy <= zr.bottom;
   if (onTree) {
-    placeLeaf(leafEl.dataset.text, leafEl.dataset.originalImg || leafEl.dataset.img, zr, cx, cy);
+    placeLeaf(leafEl.dataset.text, leafEl.dataset.img, zr, cx, cy);
     leafEl.classList.add('gone');
   } else {
     leafEl.style.opacity = '1';
