@@ -727,13 +727,23 @@ function goBack() {
   document.getElementById('page2').classList.add('active');
 }
 
-/* auto-fit text inside sticker */
+/* auto-fit text inside sticker — shrink until it fits */
 function fitText(el) {
   let fs = 13;
   el.style.fontSize = fs + 'px';
+  el.style.wordBreak = 'keep-all';
+  el.style.overflowWrap = 'break-word';
   while (el.scrollHeight > el.clientHeight && fs > 7) {
     fs -= 0.5;
     el.style.fontSize = fs + 'px';
+  }
+  /* if still doesn't fit, allow word break */
+  if (el.scrollHeight > el.clientHeight) {
+    el.style.wordBreak = 'break-all';
+    while (el.scrollHeight > el.clientHeight && fs > 6) {
+      fs -= 0.5;
+      el.style.fontSize = fs + 'px';
+    }
   }
 }
 
