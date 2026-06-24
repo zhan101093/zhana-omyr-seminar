@@ -395,14 +395,12 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf — cream bg prevents green from bleeding through */
+    /* Placed leaf — no background */
     .placed-leaf {
       position:absolute;
       width:140px; height:95px;
       display:flex; align-items:center; justify-content:center;
       pointer-events:none;
-      background:rgba(255,252,240,0.88);
-      border-radius:4px;
     }
     .placed-leaf img {
       position:absolute; inset:0;
@@ -427,28 +425,27 @@
     @media(min-width:860px) {
       .p4-layout {
         flex-direction:row; align-items:flex-start;
-        gap:24px; flex-wrap:nowrap; justify-content:center;
+        gap:14px; flex-wrap:nowrap; justify-content:center;
       }
       .ground-left  { order:1; flex:0 0 auto; }
-      .tree-scene   { order:2; flex:0 0 400px; max-width:400px; }
-      .ground-right { order:3; flex:0 0 auto; display:flex; } /* shown on desktop */
+      .tree-scene   { order:2; flex:0 0 340px; max-width:340px; }
+      .ground-right { order:3; flex:0 0 auto; display:flex; }
 
-      /* 2 columns × 3 rows on each side */
+      /* 2 columns × 3 rows on each side — 115px to prevent overflow */
       .ground-left .ground-leaves,
       .ground-right .ground-leaves {
         display:grid;
-        grid-template-columns:repeat(2,140px);
-        gap:12px;
+        grid-template-columns:repeat(2,115px);
+        gap:10px;
         background:none; border-radius:0; padding:0; backdrop-filter:none;
       }
-      /* reset mobile override */
       .ground-left .ground-leaves .ground-leaf,
       .ground-right .ground-leaves .ground-leaf {
-        width:140px; height:92px;
+        width:115px; height:78px;
       }
       .ground-left .ground-leaves .ground-leaf .lf-text,
       .ground-right .ground-leaves .ground-leaf .lf-text {
-        font-size:.68rem; padding:10px 10px; max-width:130px;
+        font-size:.62rem; padding:8px 8px; max-width:108px;
       }
       .p3-header h2 { font-size:2.2rem; }
       .p4-header h2 { font-size:2.4rem; }
@@ -732,7 +729,7 @@
       </p>
       <div class="phone-row">
         <input type="tel" id="phoneInput" class="phone-input"
-          placeholder="+7 (___) ___-__-__">
+          placeholder="(___) __ __" maxlength="11">
         <button type="button" class="btn-phone" onclick="savePhone()">
           Номер қалдыру
         </button>
@@ -1411,6 +1408,20 @@ function drawWheel() {
 /* ════════════════════════════════
    INIT — load saved scores
 ════════════════════════════════ */
+/* Phone mask: (XXX) XX XX */
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('phoneInput');
+  if (!inp) return;
+  inp.addEventListener('input', () => {
+    let d = inp.value.replace(/\D/g,'').slice(0,7);
+    let out = '';
+    if (d.length > 0) out  = '(' + d.slice(0,3);
+    if (d.length >= 3) out += ') ' + d.slice(3,5);
+    if (d.length >= 5) out += ' '  + d.slice(5,7);
+    inp.value = out;
+  });
+});
+
 async function savePhone() {
   const phone  = document.getElementById('phoneInput').value.trim();
   const letter = document.getElementById('letterText').value.trim();
