@@ -586,8 +586,8 @@
 
     <!-- tree center -->
     <div class="tree-scene">
-      <img src="tree.png.jpg" alt="Ағаш" id="treeImg"
-        style="width:100%;height:auto;display:block;position:relative;z-index:1;filter:sepia(0.6) saturate(2) hue-rotate(-15deg) brightness(0.85)"
+      <img src="tree.jpg" alt="Ағаш" id="treeImg"
+        style="width:100%;height:auto;display:block;position:relative;z-index:1"
         onerror="this.style.display='none';document.getElementById('treeFallback').style.display='block'">
       <svg id="treeFallback" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:none">
         <rect x="130" y="275" width="40" height="105" rx="10" fill="#6B4226"/>
@@ -1216,7 +1216,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const img = document.querySelector('img.basket-svg');
     if (img) img.src = src;
   });
-  makeTransparent('tree.png.jpg').then(src => {
+  makeTransparent('tree.jpg').then(src => {
     const img = document.getElementById('treeImg');
     if (img) { img.src = src; img.style.mixBlendMode = ''; }
   });
