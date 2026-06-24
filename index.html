@@ -508,6 +508,59 @@
     .p4-letter-actions {
       display:flex; gap:14px; margin-top:20px; flex-wrap:wrap; justify-content:center;
     }
+
+    /* Phone number section */
+    .phone-section {
+      width:100%; max-width:580px;
+      margin-top:24px;
+      background:rgba(255,255,255,0.16);
+      border:1.5px solid rgba(255,160,210,0.3);
+      border-radius:16px;
+      padding:20px 24px;
+      backdrop-filter:blur(6px);
+      text-align:center;
+    }
+    .phone-info {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1rem; font-style:italic;
+      color:rgba(120,60,140,0.85);
+      line-height:1.55; margin-bottom:16px;
+    }
+    .phone-row {
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+    }
+    .phone-input {
+      flex:1; min-width:180px; max-width:280px;
+      padding:11px 16px;
+      font-family:'DM Sans',sans-serif; font-size:.95rem;
+      color:#1a0820;
+      background:rgba(255,255,255,0.7);
+      border:1.5px solid rgba(255,160,210,0.4);
+      border-radius:50px; outline:none;
+      transition:border-color .2s;
+    }
+    .phone-input:focus { border-color:rgba(255,45,149,0.5); }
+    .btn-phone {
+      background:linear-gradient(135deg,#FF2D95,#BB6BFF);
+      color:#fff; border:none;
+      padding:11px 26px;
+      font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600;
+      border-radius:50px; cursor:pointer;
+      box-shadow:0 4px 20px rgba(255,45,149,.35);
+      transition:transform .18s, box-shadow .18s;
+      white-space:nowrap;
+    }
+    .btn-phone:hover { transform:translateY(-2px); box-shadow:0 6px 28px rgba(255,45,149,.5); }
+    .phone-thanks {
+      display:none;
+      margin-top:12px;
+      font-family:'Cormorant Garamond',serif; font-style:italic;
+      font-size:1rem; color:rgba(80,160,80,.9);
+    }
+    @media(min-width:860px) {
+      .phone-section { max-width:700px; }
+      .phone-info { font-size:1.05rem; }
+    }
     @media(min-width:860px) {
       .letter-title { font-size:2.6rem; }
       .letter-area  { max-width:700px; font-size:1.05rem; }
@@ -671,6 +724,22 @@
     <div class="p4-letter-actions">
       <button type="button" class="btn-secondary" onclick="goBackFromLetter()">← Артқа</button>
       <button type="button" class="btn-primary"   onclick="goToTree()">Әрі қарай →</button>
+    </div>
+
+    <div class="phone-section">
+      <p class="phone-info">
+        Номерін қалдырған адамдарға 6 айдан кейін<br>сізге хатты жіберетін боламыз 💌
+      </p>
+      <div class="phone-row">
+        <input type="tel" id="phoneInput" class="phone-input"
+          placeholder="+7 (___) ___-__-__">
+        <button type="button" class="btn-phone" onclick="savePhone()">
+          Номер қалдыру
+        </button>
+      </div>
+      <p class="phone-thanks" id="phoneThanks">
+        ✓ Рахмет! 6 айдан кейін хатыңызды жіберетін боламыз.
+      </p>
     </div>
   </div>
 </div>
@@ -1342,6 +1411,25 @@ function drawWheel() {
 /* ════════════════════════════════
    INIT — load saved scores
 ════════════════════════════════ */
+async function savePhone() {
+  const phone  = document.getElementById('phoneInput').value.trim();
+  const letter = document.getElementById('letterText').value.trim();
+  if (!phone) {
+    document.getElementById('phoneInput').focus();
+    return;
+  }
+  try {
+    await fetch('/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, letter }),
+    });
+  } catch (_) {}
+  document.getElementById('phoneThanks').style.display = 'block';
+  document.getElementById('phoneInput').disabled = true;
+  document.querySelector('.btn-phone').disabled = true;
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   buildForm();
 
