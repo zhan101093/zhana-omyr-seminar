@@ -238,15 +238,16 @@
     /* Sticker chips pile inside basket */
     .trash-inside {
       position: absolute;
-      top: 20%; bottom: 10%;
-      left: 12%; right: 12%;
+      top: 22%; bottom: 12%;
+      left: 14%; right: 14%;
       display: flex;
       flex-wrap: wrap;
       align-content: flex-end;
       gap: 2px;
-      padding: 3px;
+      padding: 2px;
       z-index: 1;
       overflow: hidden;
+      clip-path: inset(0);
     }
 
     /* Basket image on top — transparent PNG via canvas */
@@ -864,7 +865,7 @@ function addTrashThumb(color, text) {
   Object.assign(chip.style, {
     background: color,
     borderRadius: '3px',
-    width: '28px', height: '28px',
+    width: '24px', height: '24px',
     flexShrink: '0',
     transform: `rotate(${(Math.random()*14-7).toFixed(1)}deg)`,
   });
@@ -925,7 +926,7 @@ function makeTransparent(src) {
         const d = ctx.getImageData(0, 0, c.width, c.height);
         const px = d.data;
         for (let i = 0; i < px.length; i += 4) {
-          if (px[i] > 210 && px[i+1] > 210 && px[i+2] > 210) px[i+3] = 0;
+          if (px[i] > 230 && px[i+1] > 230 && px[i+2] > 230) px[i+3] = 0;
         }
         ctx.putImageData(d, 0, 0);
         imgCache[src] = c.toDataURL('image/png');
