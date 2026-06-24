@@ -337,7 +337,7 @@
       to   { transform:scale(1) rotate(var(--lr)); opacity:1; }
     }
 
-    /* Ground leaves — image-based cards */
+    /* Ground leaves — transparent image cards */
     .ground-section {
       width:100%; max-width:860px;
       margin:16px auto 0;
@@ -349,32 +349,33 @@
     }
     .ground-leaf {
       position:relative;
-      width:110px; height:70px;
+      width:120px; height:80px;
       cursor:grab; touch-action:none; user-select:none;
       display:flex; align-items:center; justify-content:center;
-      transition:transform .18s cubic-bezier(.34,1.56,.64,1), filter .18s;
+      transition:transform .18s cubic-bezier(.34,1.56,.64,1);
       flex-shrink:0;
     }
     .ground-leaf img {
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit:contain;
-      mix-blend-mode:multiply;
     }
     .ground-leaf .lf-text {
       position:relative; z-index:1;
-      font-size:.6rem; font-weight:700;
+      font-size:.62rem; font-weight:800;
       color:#1a4a10; text-align:center;
-      line-height:1.25; padding:6px 8px;
-      max-width:95px; word-break:break-word;
+      line-height:1.25; padding:10px 10px;
+      max-width:100px; word-break:keep-all;
+      overflow-wrap:break-word;
+      text-shadow:0 0 4px rgba(255,255,255,.6);
     }
-    .ground-leaf:hover { transform:scale(1.12) rotate(4deg); filter:brightness(1.05); }
+    .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
     /* Placed leaf on tree */
     .placed-leaf {
       position:absolute;
-      width:90px; height:58px;
+      width:96px; height:64px;
       display:flex; align-items:center; justify-content:center;
       animation:leafLand .5s cubic-bezier(.34,1.56,.64,1);
       pointer-events:none;
@@ -383,27 +384,28 @@
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit:contain;
-      mix-blend-mode:multiply;
-      filter:saturate(1.5) brightness(.92) hue-rotate(10deg);
+      filter:saturate(1.3) brightness(.9);
     }
     .placed-leaf .lf-text {
       position:relative; z-index:1;
-      font-size:.55rem; font-weight:700;
+      font-size:.56rem; font-weight:800;
       color:#0a3008; text-align:center;
-      line-height:1.2; padding:5px 6px;
-      max-width:78px; word-break:break-word;
+      line-height:1.2; padding:6px 6px;
+      max-width:82px; word-break:keep-all;
+      overflow-wrap:break-word;
+      text-shadow:0 0 3px rgba(255,255,255,.5);
     }
 
     .p4-back { margin-top:28px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
 
     @media(min-width:860px) {
       .tree-scene    { max-width:600px; }
-      .ground-section{ max-width:900px; }
+      .ground-section{ max-width:960px; }
       .p4-header h2  { font-size:2.8rem; }
-      .ground-leaf   { width:130px; height:84px; }
-      .ground-leaf .lf-text { font-size:.65rem; }
-      .placed-leaf   { width:106px; height:68px; }
-      .placed-leaf .lf-text { font-size:.58rem; }
+      .ground-leaf   { width:150px; height:100px; }
+      .ground-leaf .lf-text { font-size:.72rem; }
+      .placed-leaf   { width:114px; height:76px; }
+      .placed-leaf .lf-text { font-size:.6rem; }
     }
 
     /* ══ Tablet (≥600px) ══ */
@@ -558,7 +560,7 @@
   <div class="tree-scene">
     <!-- ── Tree / basket image ── -->
     <img src="tree.png.jpg" alt="Ағаш" id="treeImg"
-      style="width:100%;height:auto;display:block;position:relative;z-index:1"
+      style="width:100%;height:auto;display:block;position:relative;z-index:1;mix-blend-mode:multiply"
       onerror="this.style.display='none';document.getElementById('treeFallback').style.display='block'">
     <!-- Fallback SVG if image not found -->
     <svg id="treeFallback" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:none">
@@ -905,19 +907,55 @@ const LEAF_DATA = [
 
 let leafEl = null, leafGhost = null, leafOX = 0, leafOY = 0;
 
-function buildLeaves() {
+/* ── Canvas: strip white/near-white pixels → transparent PNG ── */
+const imgCache = {};
+function makeTransparent(src) {
+  if (imgCache[src]) return Promise.resolve(imgCache[src]);
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const d = ctx.getImageData(0, 0, c.width, c.height);
+        const px = d.data;
+        for (let i = 0; i < px.length; i += 4) {
+          if (px[i] > 210 && px[i+1] > 210 && px[i+2] > 210) px[i+3] = 0;
+        }
+        ctx.putImageData(d, 0, 0);
+        imgCache[src] = c.toDataURL('image/png');
+      } catch(_) { imgCache[src] = src; }
+      resolve(imgCache[src]);
+    };
+    img.onerror = () => { imgCache[src] = src; resolve(src); };
+    img.src = src;
+  });
+}
+
+async function buildLeaves() {
   const grid = document.getElementById('groundLeaves');
-  grid.innerHTML = '';
+  grid.innerHTML = '<p style="color:rgba(30,80,10,.5);padding:20px;font-size:.85rem">Жүктелуде…</p>';
   document.getElementById('treeLeafContainer').innerHTML = '';
 
+  const [src1, src2] = await Promise.all([
+    makeTransparent('list1.jpg'),
+    makeTransparent('list2.jpg'),
+  ]);
+  const imgMap = { 'list1.jpg': src1, 'list2.jpg': src2 };
+
+  grid.innerHTML = '';
+
   LEAF_DATA.forEach(data => {
+    const imgSrc = imgMap[data.img] || data.img;
     const el = document.createElement('div');
     el.className = 'ground-leaf';
-    el.dataset.img  = data.img;
+    el.dataset.img  = imgSrc;
     el.dataset.text = data.text;
     const tilt = (Math.random() * 8 - 4).toFixed(1);
     el.style.transform = `rotate(${tilt}deg)`;
-    el.innerHTML = `<img src="${data.img}" alt=""><span class="lf-text">${data.text}</span>`;
+    el.innerHTML = `<img src="${imgSrc}" alt=""><span class="lf-text">${data.text}</span>`;
     el.addEventListener('mousedown',  e => startLeafDrag(e, el));
     el.addEventListener('touchstart', e => startLeafDrag(e, el), { passive: false });
     grid.appendChild(el);
