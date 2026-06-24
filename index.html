@@ -237,10 +237,56 @@
 
     .p3-back { margin-top:32px; }
 
+    /* ══ Desktop — md (≥860px) ══ */
+    @media(min-width:860px) {
+      .page { padding:52px 40px 72px; }
+
+      /* Page 1 */
+      .form-header h1  { font-size:4rem; }
+      .form-header p   { font-size:1rem; }
+      .badge           { font-size:.82rem; padding:7px 22px; }
+      .form-container  { max-width:1060px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+      .submit-area     { margin-top:38px; max-width:1060px; width:100%; }
+      .btn-primary     { padding:18px 68px; font-size:1.08rem; }
+
+      /* Page 2 */
+      .results-header h1 { font-size:2.8rem; }
+      .wheel-wrap        { max-width:720px; }
+      .p2-actions        { gap:16px; margin-top:28px; }
+      .btn-secondary     { padding:13px 40px; font-size:1rem; }
+
+      /* Page 3 */
+      .p3-header h2      { font-size:2.8rem; }
+      #stickersGrid      { grid-template-columns:repeat(4,150px); gap:20px; }
+      .sticker           { width:150px; height:150px; font-size:.85rem; }
+      .trash-zone        { min-width:200px; padding:32px 36px 28px; }
+      .trash-can         { font-size:9rem; }
+    }
+
+    /* ══ Desktop — lg (≥1200px) ══ */
+    @media(min-width:1200px) {
+      .form-header h1    { font-size:4.8rem; }
+      .form-container    { max-width:1200px; }
+      .card-name         { font-size:.95rem; }
+      .card-val          { font-size:2.5rem; }
+      .icon-wrap         { width:44px; height:44px; font-size:1.35rem; }
+      .slider-card       { padding:22px 28px 16px; }
+      .wheel-wrap        { max-width:800px; }
+      .results-header h1 { font-size:3.2rem; }
+      #stickersGrid      { grid-template-columns:repeat(5,150px); }
+      .p3-header h2      { font-size:3.2rem; }
+      .trash-can         { font-size:10rem; }
+    }
+
+    /* ══ Mobile ══ */
     @media(max-width:700px) {
       #stickersGrid { grid-template-columns:repeat(2,140px); }
       .p3-layout { gap:28px; }
+    }
+    @media(max-width:500px) {
       .form-header h1 { font-size:2.2rem; }
+      #stickersGrid { grid-template-columns:repeat(2,130px); }
+      .sticker { width:130px; height:130px; font-size:.75rem; }
     }
   </style>
 </head>
