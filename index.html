@@ -303,14 +303,10 @@
       margin:0 auto;
     }
 
-    /* Drop zone — covers whole image */
+    /* Drop zone — covers whole image, no visual indicator */
     .tree-drop-zone {
       position:absolute; top:5%; left:5%; right:5%; bottom:5%;
-      z-index:3; border-radius:8px;
-      transition: box-shadow .2s;
-    }
-    .tree-drop-zone.tree-active {
-      box-shadow: inset 0 0 50px rgba(100,220,80,0.4);
+      z-index:3;
     }
 
     /* Placed leaves container — whole image area */
@@ -410,15 +406,20 @@
     .p4-back { margin-top:28px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
 
     @media(min-width:860px) {
-      .p4-layout      { flex-direction:row; align-items:flex-start; gap:24px; }
-      .tree-scene     { max-width:460px; flex-shrink:0; order:2; }   /* center */
-      .ground-section { max-width:300px; order:1; flex-shrink:0; }   /* left */
-      .ground-leaves  { flex-direction:column; align-items:center; gap:10px; padding:14px 10px; }
+      .p4-layout      { flex-direction:row; align-items:flex-start; gap:20px; flex-wrap:nowrap; }
+      .ground-left    { order:1; flex-shrink:0; max-width:230px; }
+      .tree-scene     { order:2; flex:0 0 420px; }
+      .ground-right   { order:3; flex-shrink:0; max-width:230px; }
+      .ground-left .ground-leaves,
+      .ground-right .ground-leaves {
+        flex-direction:column; align-items:center; gap:12px;
+        background:none; border-radius:0; padding:0; backdrop-filter:none;
+      }
       .p4-header h2   { font-size:2.6rem; }
-      .ground-leaf    { width:140px; height:92px; }
-      .ground-leaf .lf-text { font-size:.68rem; }
-      .placed-leaf    { width:100px; height:66px; }
-      .placed-leaf .lf-text { font-size:.58rem; }
+      .ground-leaf    { width:160px; height:108px; }
+      .ground-leaf .lf-text { font-size:.7rem; }
+      .placed-leaf    { width:140px; height:95px; }
+      .placed-leaf .lf-text { font-size:.64rem; }
     }
 
     /* ══ Tablet (≥600px) ══ */
@@ -572,9 +573,9 @@
 
   <div class="p4-layout">
 
-    <!-- ground leaves left -->
-    <div class="ground-section">
-      <div class="ground-leaves" id="groundLeaves"></div>
+    <!-- leaves LEFT side -->
+    <div class="ground-section ground-left">
+      <div class="ground-leaves" id="groundLeft"></div>
     </div>
 
     <!-- tree center -->
@@ -583,13 +584,20 @@
         style="width:100%;height:auto;display:block;position:relative;z-index:1"
         onerror="this.style.display='none';document.getElementById('treeFallback').style.display='block'">
       <svg id="treeFallback" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:none">
-        <rect x="122" y="282" width="56" height="98" rx="12" fill="#795548"/>
-        <ellipse cx="150" cy="215" rx="135" ry="95" fill="#33691e"/>
-        <ellipse cx="150" cy="160" rx="110" ry="90" fill="#558b2f"/>
-        <ellipse cx="150" cy="120" rx="90" ry="75" fill="#689f38"/>
+        <rect x="130" y="275" width="40" height="105" rx="10" fill="#6B4226"/>
+        <rect x="136" y="275" width="28" height="105" rx="8" fill="#8B5E3C"/>
+        <ellipse cx="150" cy="210" rx="132" ry="92" fill="#2E6B1E"/>
+        <ellipse cx="150" cy="165" rx="108" ry="88" fill="#3D8C28"/>
+        <ellipse cx="150" cy="118" rx="88" ry="74" fill="#4CAF35"/>
+        <ellipse cx="132" cy="95"  rx="62" ry="52" fill="#5EC43D"/>
       </svg>
       <div class="tree-drop-zone" id="treeDropZone"></div>
       <div class="tree-leaf-container" id="treeLeafContainer"></div>
+    </div>
+
+    <!-- leaves RIGHT side -->
+    <div class="ground-section ground-right">
+      <div class="ground-leaves" id="groundRight"></div>
     </div>
 
   </div><!-- /p4-layout -->
@@ -956,20 +964,26 @@ async function buildLeaves() {
   ]);
   const imgMap = { 'list1.jpg': src1, 'list2.jpg': src2 };
 
-  grid.innerHTML = '';
+  /* find containers — support both old single and new split layout */
+  const leftEl  = document.getElementById('groundLeft')  || document.getElementById('groundLeaves');
+  const rightEl = document.getElementById('groundRight') || leftEl;
+  if (leftEl)  leftEl.innerHTML  = '';
+  if (rightEl && rightEl !== leftEl) rightEl.innerHTML = '';
 
-  LEAF_DATA.forEach(data => {
-    const imgSrc = imgMap[data.img] || data.img;
-    const el = document.createElement('div');
-    el.className = 'ground-leaf';
+  LEAF_DATA.forEach((data, idx) => {
+    const imgSrc  = imgMap[data.img] || data.img;
+    const el      = document.createElement('div');
+    el.className  = 'ground-leaf';
     el.dataset.img  = imgSrc;
     el.dataset.text = data.text;
-    const tilt = (Math.random() * 8 - 4).toFixed(1);
+    const tilt = (Math.random() * 10 - 5).toFixed(1);
     el.style.transform = `rotate(${tilt}deg)`;
     el.innerHTML = `<img src="${imgSrc}" alt=""><span class="lf-text">${data.text}</span>`;
     el.addEventListener('mousedown',  e => startLeafDrag(e, el));
     el.addEventListener('touchstart', e => startLeafDrag(e, el), { passive: false });
-    grid.appendChild(el);
+    /* alternate: even → left, odd → right */
+    const target = (idx % 2 === 0) ? leftEl : rightEl;
+    if (target) target.appendChild(el);
   });
 }
 
