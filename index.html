@@ -188,17 +188,46 @@
     }
 
     /* Trash zone */
-    .trash-zone { display:flex; flex-direction:column; align-items:center; gap:10px; padding-top:20px; }
-    .trash-can { font-size:6rem; line-height:1; filter:drop-shadow(0 6px 16px rgba(0,0,0,.22)); cursor:default; transition:transform .15s; }
+    .trash-zone {
+      display:flex; flex-direction:column; align-items:center; gap:14px;
+      padding:28px 32px 24px;
+      border-radius:24px;
+      border:3px dashed rgba(0,0,0,0.15);
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(8px);
+      transition: all .22s ease;
+      min-width: 180px;
+    }
+    .trash-zone.drag-over {
+      border-color: #FF2D95;
+      background: rgba(255,45,149,0.07);
+      transform: scale(1.06);
+      box-shadow: 0 0 40px rgba(255,45,149,0.25);
+    }
+    .trash-can {
+      font-size:7.5rem; line-height:1;
+      filter:drop-shadow(0 8px 20px rgba(0,0,0,.22));
+      transition:transform .2s, filter .2s;
+      cursor:default; user-select:none;
+    }
+    .trash-zone.drag-over .trash-can {
+      transform: scale(1.18);
+      filter: drop-shadow(0 8px 24px rgba(255,45,149,.5));
+    }
     .trash-can.shake { animation:trashShake .45s ease; }
     @keyframes trashShake {
       0%,100%{transform:rotate(0) scale(1);}
-      20%{transform:rotate(-14deg) scale(1.12);}
-      40%{transform:rotate(14deg) scale(1.12);}
-      60%{transform:rotate(-8deg) scale(1.05);}
-      80%{transform:rotate(8deg) scale(1.05);}
+      20%{transform:rotate(-14deg) scale(1.15);}
+      40%{transform:rotate(14deg) scale(1.15);}
+      60%{transform:rotate(-8deg) scale(1.06);}
+      80%{transform:rotate(8deg) scale(1.06);}
     }
-    .trash-label { font-size:.8rem; font-weight:500; color:rgba(60,20,80,.45); text-align:center; max-width:120px; line-height:1.4; }
+    .trash-label {
+      font-size:.82rem; font-weight:600;
+      color:rgba(60,20,80,.5); text-align:center;
+      max-width:140px; line-height:1.45;
+    }
+    .trash-zone.drag-over .trash-label { color:#CC0060; }
 
     /* Done message */
     .done-msg { display:none; text-align:center; padding:20px 0; }
@@ -401,54 +430,130 @@ function goBack() {
   document.getElementById('page2').classList.add('active');
 }
 
+/* ── Drag state ── */
+let dragEl   = null;   // original sticker being dragged
+let dragGhost = null;  // floating clone following cursor
+let dragOX = 0, dragOY = 0; // offset inside sticker
+
 function buildStickers() {
   const grid = document.getElementById('stickersGrid');
   grid.innerHTML = '';
   document.getElementById('doneMsg').style.display = 'none';
   grid.style.display = 'grid';
 
-  STICKER_DATA.forEach((s, idx) => {
+  STICKER_DATA.forEach((s) => {
     const el = document.createElement('div');
     el.className = 'sticker';
     el.style.background = s.color;
-    /* slight random tilt */
     const tilt = (Math.random() * 6 - 3).toFixed(1);
     el.style.transform = `rotate(${tilt}deg)`;
-    el.dataset.baseTilt = tilt;
     el.textContent = s.text;
-    el.setAttribute('role', 'button');
-    el.setAttribute('tabindex', '0');
-    el.setAttribute('aria-label', `${s.text} — қоқысқа тастау`);
-    el.addEventListener('click', () => throwToTrash(el));
-    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') throwToTrash(el); });
+    el.setAttribute('aria-label', `${s.text} — қоқысқа сүйреп тастаңыз`);
+
+    el.addEventListener('mousedown',  e => beginDrag(e, el));
+    el.addEventListener('touchstart', e => beginDrag(e, el), { passive: false });
     grid.appendChild(el);
   });
 }
 
-function throwToTrash(el) {
-  if (el.dataset.flying) return;
-  el.dataset.flying = '1';
+function beginDrag(e, el) {
+  e.preventDefault();
+  const isTouch = e.type === 'touchstart';
+  const cx = isTouch ? e.touches[0].clientX : e.clientX;
+  const cy = isTouch ? e.touches[0].clientY : e.clientY;
 
-  const trash = document.getElementById('trashCan');
-  const tr = trash.getBoundingClientRect();
-  const sr = el.getBoundingClientRect();
+  const rect = el.getBoundingClientRect();
+  dragOX = cx - rect.left;
+  dragOY = cy - rect.top;
 
-  const dx = (tr.left + tr.width  / 2) - (sr.left + sr.width  / 2);
-  const dy = (tr.top  + tr.height / 2) - (sr.top  + sr.height / 2);
-  const spin = (Math.random() > .5 ? 1 : -1) * (200 + Math.random() * 200);
+  /* floating ghost */
+  dragGhost = el.cloneNode(true);
+  Object.assign(dragGhost.style, {
+    position: 'fixed',
+    width:  rect.width  + 'px',
+    height: rect.height + 'px',
+    left:   (cx - dragOX) + 'px',
+    top:    (cy - dragOY) + 'px',
+    zIndex: '1000',
+    pointerEvents: 'none',
+    transform: 'rotate(6deg) scale(1.1)',
+    boxShadow: '0 16px 48px rgba(0,0,0,.28)',
+    transition: 'none',
+    margin: '0',
+    opacity: '1',
+  });
+  document.body.appendChild(dragGhost);
 
-  el.style.transition = 'transform .48s cubic-bezier(.55,.06,.68,.19), opacity .48s';
-  el.style.transform  = `translate(${dx}px,${dy}px) scale(0.08) rotate(${spin}deg)`;
-  el.style.opacity    = '0';
-  el.style.pointerEvents = 'none';
-  el.style.zIndex = '50';
+  el.style.opacity = '0.28';
+  dragEl = el;
 
-  setTimeout(() => {
-    el.remove();
-    trash.classList.add('shake');
-    setTimeout(() => trash.classList.remove('shake'), 500);
-    checkAllGone();
-  }, 480);
+  if (isTouch) {
+    document.addEventListener('touchmove', onDragMove, { passive: false });
+    document.addEventListener('touchend',  onDragEnd);
+  } else {
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup',   onDragEnd);
+  }
+}
+
+function onDragMove(e) {
+  if (!dragGhost) return;
+  e.preventDefault();
+  const isTouch = e.type === 'touchmove';
+  const cx = isTouch ? e.touches[0].clientX : e.clientX;
+  const cy = isTouch ? e.touches[0].clientY : e.clientY;
+  dragGhost.style.left = (cx - dragOX) + 'px';
+  dragGhost.style.top  = (cy - dragOY) + 'px';
+
+  const zone = document.getElementById('trashZone');
+  const zr   = zone.getBoundingClientRect();
+  const over = cx >= zr.left && cx <= zr.right && cy >= zr.top && cy <= zr.bottom;
+  zone.classList.toggle('drag-over', over);
+}
+
+function onDragEnd(e) {
+  if (!dragGhost || !dragEl) return;
+  document.removeEventListener('mousemove', onDragMove);
+  document.removeEventListener('mouseup',   onDragEnd);
+  document.removeEventListener('touchmove', onDragMove);
+  document.removeEventListener('touchend',  onDragEnd);
+
+  const isTouch = e.type === 'touchend';
+  const cx = isTouch ? e.changedTouches[0].clientX : e.clientX;
+  const cy = isTouch ? e.changedTouches[0].clientY : e.clientY;
+
+  const zone = document.getElementById('trashZone');
+  const zr   = zone.getBoundingClientRect();
+  const overTrash = cx >= zr.left && cx <= zr.right && cy >= zr.top && cy <= zr.bottom;
+  zone.classList.remove('drag-over');
+
+  if (overTrash) {
+    const trash = document.getElementById('trashCan');
+    const tr    = trash.getBoundingClientRect();
+    const spin  = (Math.random() > .5 ? 1 : -1) * (240 + Math.random() * 180);
+    dragGhost.style.transition = 'all .42s cubic-bezier(.55,.06,.68,.19)';
+    dragGhost.style.left    = (tr.left + tr.width/2  - parseFloat(dragGhost.style.width)/2)  + 'px';
+    dragGhost.style.top     = (tr.top  + tr.height/2 - parseFloat(dragGhost.style.height)/2) + 'px';
+    dragGhost.style.transform = `scale(0.05) rotate(${spin}deg)`;
+    dragGhost.style.opacity = '0';
+
+    const ghost = dragGhost, orig = dragEl;
+    dragGhost = null; dragEl = null;
+
+    setTimeout(() => {
+      ghost.remove();
+      orig.remove();
+      trash.classList.add('shake');
+      setTimeout(() => trash.classList.remove('shake'), 500);
+      checkAllGone();
+    }, 420);
+  } else {
+    /* snap back */
+    dragEl.style.opacity = '1';
+    dragGhost.remove();
+    dragGhost = null;
+    dragEl    = null;
+  }
 }
 
 function checkAllGone() {
