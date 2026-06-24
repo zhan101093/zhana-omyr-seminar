@@ -282,7 +282,7 @@
     .p3-back { margin-top:24px; display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
 
     /* ══════════════════ PAGE 4 — TREE ══════════════════ */
-    #page4 {
+    #page5 {
       background: linear-gradient(to bottom,
         #c8e8f7 0%, #d8f0e8 38%,
         #a0d090 55%, #78b060 70%,
@@ -455,34 +455,57 @@
     }
 
     /* ══════════ PAGE 4 — LETTER ══════════ */
-    .letter-card {
-      width:100%; max-width:620px;
-      margin:16px 0 0;
+    .page4-letter {
       position:relative;
+      padding:0;
+      overflow:hidden;
     }
-    .letter-img {
-      width:100%; height:auto; display:block;
-      border-radius:8px;
-    }
-    /* transparent textarea on top of letter image */
-    .letter-area {
+    .letter-bg-img {
       position:absolute;
-      top:12%; left:9%; right:9%; bottom:8%;
-      background:transparent;
-      border:none; outline:none;
-      resize:none;
-      font-family:'DM Sans',sans-serif;
-      font-size:.95rem; line-height:1.8;
-      color:#2a1a3a;
-      padding:4px 8px;
+      top:0; left:0; width:100%; height:100%;
+      object-fit:cover;
+      object-position:center;
+      z-index:0;
     }
-    .letter-area::placeholder { color:rgba(60,20,80,0.4); font-style:italic; }
+    .letter-content {
+      position:relative; z-index:1;
+      width:100%; min-height:100vh;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      padding:44px 20px 50px;
+    }
+    .letter-title {
+      font-family:'Cormorant Garamond',serif;
+      font-size:2rem; font-weight:700;
+      background:linear-gradient(135deg,#FF2D95,#BB6BFF);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text; margin-bottom:12px;
+    }
+    .letter-area {
+      width:100%; max-width:580px;
+      min-height:55vh;
+      background:rgba(255,255,255,0.18);
+      border:1.5px solid rgba(255,160,210,0.35);
+      border-radius:16px;
+      backdrop-filter:blur(4px);
+      padding:24px 24px;
+      font-family:'DM Sans',sans-serif;
+      font-size:1rem; line-height:1.85;
+      color:#1a0820;
+      resize:vertical; outline:none;
+      transition:border-color .2s, background .2s;
+    }
+    .letter-area::placeholder { color:rgba(60,20,80,0.45); font-style:italic; }
+    .letter-area:focus {
+      border-color:rgba(255,45,149,0.5);
+      background:rgba(255,255,255,0.28);
+    }
     .p4-letter-actions {
       display:flex; gap:14px; margin-top:20px; flex-wrap:wrap; justify-content:center;
     }
     @media(min-width:860px) {
-      .letter-card { max-width:720px; }
-      .letter-area { font-size:1rem; }
+      .letter-title { font-size:2.6rem; }
+      .letter-area  { max-width:700px; font-size:1.05rem; }
     }
 
     /* ══ Tablet (≥600px) ══ */
@@ -626,23 +649,24 @@
 </div>
 
 <!-- ══════════ PAGE 4 — LETTER ══════════ -->
-<div id="page4" class="page" style="align-items:center;justify-content:flex-start">
-  <header class="form-header" style="max-width:700px;width:100%">
-    <div class="badge">✉️ Болашаққа хат</div>
-    <h1 style="font-size:2.4rem">6 айдан кейінгі өзіме хат</h1>
-    <div class="divider"></div>
-    <p>Болашақтағы өзіңізге не айтқыңыз келеді?</p>
-  </header>
+<div id="page4" class="page page4-letter">
+  <!-- full-page letter background -->
+  <img id="letterImg" src="5323426833581676495.jpg" alt="" class="letter-bg-img">
 
-  <div class="letter-card">
-    <img id="letterImg" src="5323426833581676495.jpg" alt="Хат" class="letter-img">
+  <!-- content floats on top -->
+  <div class="letter-content">
+    <header style="text-align:center;margin-bottom:16px">
+      <div class="badge">✉️ Болашаққа хат</div>
+      <h1 class="letter-title">6 айдан кейінгі өзіме хат</h1>
+    </header>
+
     <textarea id="letterText" class="letter-area"
       placeholder="Сүйікті өзім,&#10;&#10;Бүгін мен сезінем..."></textarea>
-  </div>
 
-  <div class="p4-letter-actions">
-    <button type="button" class="btn-secondary" onclick="goBackFromLetter()">← Артқа</button>
-    <button type="button" class="btn-primary"   onclick="goToTree()">Әрі қарай →</button>
+    <div class="p4-letter-actions">
+      <button type="button" class="btn-secondary" onclick="goBackFromLetter()">← Артқа</button>
+      <button type="button" class="btn-primary"   onclick="goToTree()">Әрі қарай →</button>
+    </div>
   </div>
 </div>
 
@@ -1077,14 +1101,17 @@ async function buildLeaves() {
   ]);
   const imgMap = { 'list1.jpg': src1, 'list2.jpg': src2 };
 
-  const isMobile = window.innerWidth < 860;
+  /* check if right panel is actually visible */
+  const rightPanel = document.querySelector('.ground-right');
+  const rightVisible = rightEl && rightPanel &&
+    getComputedStyle(rightPanel).display !== 'none';
 
   LEAF_DATA.forEach((data, idx) => {
     const processedSrc = imgMap[data.img] || data.img;
     const el = document.createElement('div');
     el.className = 'ground-leaf';
-    el.dataset.img         = processedSrc; /* for ghost */
-    el.dataset.originalImg = data.img;     /* original JPG — placed leaf keeps this */
+    el.dataset.img         = processedSrc;
+    el.dataset.originalImg = data.img;
     el.dataset.text        = data.text;
     const tilt = (Math.random() * 10 - 5).toFixed(1);
     el.style.transform = `rotate(${tilt}deg)`;
@@ -1092,8 +1119,8 @@ async function buildLeaves() {
     el.addEventListener('mousedown',  e => startLeafDrag(e, el));
     el.addEventListener('touchstart', e => startLeafDrag(e, el), { passive: false });
 
-    /* mobile: all → left; desktop: alternate left/right */
-    const target = (isMobile || !rightEl || idx % 2 === 0) ? leftEl : rightEl;
+    /* desktop: even→left, odd→right; mobile: all→left */
+    const target = (rightVisible && idx % 2 !== 0) ? rightEl : leftEl;
     target.appendChild(el);
   });
 }
@@ -1317,6 +1344,9 @@ window.addEventListener('DOMContentLoaded', () => {
   makeTransparent('5323426833581676495.jpg').then(src => {
     const img = document.getElementById('letterImg');
     if (img) img.src = src;
+    /* also set as page background for full coverage */
+    const p4 = document.getElementById('page4');
+    if (p4) p4.style.backgroundImage = `url(${src})`;
   });
 
   const saved = localStorage.getItem('wheel_scores');
