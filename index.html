@@ -396,30 +396,17 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf — identical to ground-leaf, no bg, no border, no radius */
+    /* Placed leaf — canvas snapshot, looks exactly like ground leaf */
     .placed-leaf {
       position:absolute;
       width:115px; height:78px;
-      display:flex; align-items:center; justify-content:center;
       cursor:grab; touch-action:none; user-select:none;
-      z-index:20; overflow:hidden;
+      z-index:20;
     }
     .placed-leaf img {
-      position:absolute;
-      width:70%; height:70%;
-      inset:15%;
-      object-fit:contain;
-    }
-    .placed-leaf .lf-text {
-      position:relative; z-index:1;
-      font-size:.72rem; font-weight:700;
-      color:#fff; text-align:center;
-      line-height:1.35; padding:12px 14px;
-      max-width:105px;
-      word-break:keep-all;
-      overflow-wrap:normal;
-      hyphens:none;
-      text-shadow: 0 1px 4px rgba(0,0,0,.7), 0 0 10px rgba(0,0,0,.4);
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:fill;
     }
     .placed-leaf:active { cursor:grabbing; }
 
@@ -871,6 +858,14 @@ function buildForm() {
   }, 400);
 }
 
+/* ── pre-cache snapshots after leaves are in DOM ── */
+function prebuildLeafSnapshots() {
+  leafSnapCache.clear();
+  setTimeout(() => {
+    document.querySelectorAll('.ground-leaf').forEach(el => snapshotLeaf(el));
+  }, 500);
+}
+
 function onSlider(i, el) {
   const v = parseInt(el.value);
   scores[i] = v;
@@ -1102,8 +1097,8 @@ function goToTree() {
   window.scrollTo({ top:0, behavior:'smooth' });
   document.getElementById('page4').classList.remove('active');
   document.getElementById('page5').classList.add('active');
-  /* delay so CSS (display:flex on ground-right) is computed before building leaves */
-  setTimeout(buildLeaves, 80);
+  /* delay so CSS is computed before building leaves */
+  setTimeout(() => { buildLeaves().then(prebuildLeafSnapshots); }, 80);
 }
 
 /* page5 ← back to page4 (letter) */
@@ -1264,7 +1259,8 @@ function onLeafEnd(e) {
 
   const onTree = cx >= zr.left && cx <= zr.right && cy >= zr.top && cy <= zr.bottom;
   if (onTree) {
-    placeLeaf(leafEl.dataset.text, leafEl.dataset.img, zr, cx, cy);
+    const _cx = cx, _cy = cy, _el = leafEl;
+    snapshotLeaf(_el).then(snap => placeLeaf(_el.dataset.text, snap, zr, _cx, _cy));
     leafEl.classList.add('gone');
   } else {
     leafEl.style.opacity = '1';
@@ -1273,21 +1269,99 @@ function onLeafEnd(e) {
   leafGhost = null; leafEl = null;
 }
 
-function placeLeaf(text, imgSrc, zoneRect, dropX, dropY) {
+/* ════════ Canvas snapshot: captures leaf EXACTLY as it appears ════════ */
+const leafSnapCache = new Map();
+
+function page5GradColor(yFrac) {
+  const stops = [
+    [0,    [200,232,247]], [0.38,[216,240,232]],
+    [0.55, [160,208,144]], [0.70,[120,176,96]],
+    [0.82, [200,160,96]],  [1.0, [160,120,64]],
+  ];
+  const t = Math.max(0, Math.min(1, yFrac));
+  for (let i = 0; i < stops.length - 1; i++) {
+    const [t0,c0] = stops[i], [t1,c1] = stops[i+1];
+    if (t >= t0 && t <= t1) {
+      const f = (t-t0)/(t1-t0);
+      return `rgb(${Math.round(c0[0]+f*(c1[0]-c0[0]))},${Math.round(c0[1]+f*(c1[1]-c0[1]))},${Math.round(c0[2]+f*(c1[2]-c0[2]))})`;
+    }
+  }
+  return `rgb(${stops[stops.length-1][1].join(',')})`;
+}
+
+function wrapTextCanvas(ctx, text, x, cy, maxW, lineH) {
+  const words = text.split(' ');
+  const lines = []; let cur = '';
+  for (const w of words) {
+    const t = cur ? cur+' '+w : w;
+    if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; }
+    else cur = t;
+  }
+  if (cur) lines.push(cur);
+  const startY = cy - ((lines.length - 1) * lineH) / 2;
+  lines.forEach((l, i) => ctx.fillText(l, x, startY + i * lineH));
+}
+
+async function snapshotLeaf(groundEl) {
+  const key = groundEl.dataset.text;
+  if (leafSnapCache.has(key)) return leafSnapCache.get(key);
+
+  const W = 115, H = 78;
+  const dpr = window.devicePixelRatio || 1;
+  const cv = document.createElement('canvas');
+  cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  /* background — page5 gradient at leaf's current position */
+  const rect = groundEl.getBoundingClientRect();
+  const yf = Math.max(0, Math.min(1, (rect.top + H/2) / window.innerHeight));
+  ctx.fillStyle = page5GradColor(yf);
+  ctx.fillRect(0, 0, W, H);
+
+  /* leaf image (processed transparent PNG) */
+  const imgSrc = groundEl.dataset.img;
+  const img = await new Promise(r => {
+    const im = new Image();
+    im.onload = () => r(im);
+    im.onerror = () => r(null);
+    if (imgSrc.startsWith('data:') || imgSrc.startsWith('blob:')) im.src = imgSrc;
+    else { im.crossOrigin = 'anonymous'; im.src = imgSrc; }
+    if (im.complete && im.naturalWidth) r(im);
+  });
+  if (img) {
+    const px = W * 0.15, py = H * 0.15;
+    ctx.drawImage(img, px, py, W * 0.7, H * 0.7);
+  }
+
+  /* text */
+  ctx.shadowColor = 'rgba(0,0,0,.65)';
+  ctx.shadowBlur = 3;
+  ctx.fillStyle = '#fff';
+  ctx.font = `700 8.5px DM Sans, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  wrapTextCanvas(ctx, groundEl.dataset.text, W/2, H/2, W * 0.78, 10.5);
+
+  const url = cv.toDataURL('image/png');
+  leafSnapCache.set(key, url);
+  return url;
+}
+
+/* Place leaf using pre-captured snapshot — looks identical to ground leaf */
+function placeLeaf(text, snapUrl, zoneRect, dropX, dropY) {
   const page5 = document.getElementById('page5');
   const pr    = page5.getBoundingClientRect();
   const w = 115, h = 78;
   const relX = dropX - pr.left - w / 2;
   const relY = dropY - pr.top  - h / 2;
-  const rot  = (Math.random() * 20 - 10).toFixed(1);
 
   const leaf = document.createElement('div');
   leaf.className = 'placed-leaf';
   leaf.style.left = relX + 'px';
   leaf.style.top  = relY + 'px';
-  leaf.innerHTML = `<img src="${imgSrc}" alt=""><span class="lf-text">${text}</span>`;
+  leaf.innerHTML  = `<img src="${snapUrl}" alt="${text}">`;
 
-  /* Allow repositioning placed leaves */
   leaf.addEventListener('mousedown',  e => startMoveLeaf(e, leaf));
   leaf.addEventListener('touchstart', e => startMoveLeaf(e, leaf), { passive: false });
 
