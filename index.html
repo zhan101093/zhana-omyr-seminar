@@ -396,14 +396,13 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf — no bg, no border, overflow hidden clips edge artifacts */
+    /* Placed leaf — visually identical to ground-leaf, draggable to reposition */
     .placed-leaf {
       position:absolute;
-      width:140px; height:95px;
+      width:115px; height:78px;
       display:flex; align-items:center; justify-content:center;
-      pointer-events:none;
-      background:none;
-      overflow:hidden;
+      cursor:grab; touch-action:none; user-select:none;
+      z-index:20; overflow:hidden;
     }
     .placed-leaf img {
       position:absolute;
@@ -413,15 +412,16 @@
     }
     .placed-leaf .lf-text {
       position:relative; z-index:1;
-      font-size:.68rem; font-weight:700;
+      font-size:.72rem; font-weight:700;
       color:#fff; text-align:center;
-      line-height:1.35; padding:8px 10px;
-      max-width:128px;
+      line-height:1.35; padding:12px 14px;
+      max-width:105px;
       word-break:keep-all;
       overflow-wrap:normal;
       hyphens:none;
       text-shadow: 0 1px 4px rgba(0,0,0,.7), 0 0 10px rgba(0,0,0,.4);
     }
+    .placed-leaf:active { cursor:grabbing; }
 
     .p4-back { margin-top:28px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
 
@@ -1274,25 +1274,89 @@ function onLeafEnd(e) {
 }
 
 function placeLeaf(text, imgSrc, zoneRect, dropX, dropY) {
-  /* Append to page5 directly — leaf background = page nature gradient,
-     same as ground leaf. No green/white discoloration. */
   const page5 = document.getElementById('page5');
   const pr    = page5.getBoundingClientRect();
-  const w = 140, h = 95;
+  const w = 115, h = 78;
   const relX = dropX - pr.left - w / 2;
   const relY = dropY - pr.top  - h / 2;
-  const rot  = (Math.random() * 40 - 20).toFixed(0);
+  const rot  = (Math.random() * 20 - 10).toFixed(1);
 
   const leaf = document.createElement('div');
   leaf.className = 'placed-leaf';
-  leaf.style.position = 'absolute';
-  leaf.style.left = relX + 'px';
-  leaf.style.top  = relY + 'px';
-  leaf.style.zIndex = '20';
-  leaf.style.setProperty('--lr', rot + 'deg');
+  leaf.style.left      = relX + 'px';
+  leaf.style.top       = relY + 'px';
   leaf.style.transform = `rotate(${rot}deg)`;
   leaf.innerHTML = `<img src="${imgSrc}" alt=""><span class="lf-text">${text}</span>`;
+
+  /* Allow repositioning placed leaves */
+  leaf.addEventListener('mousedown',  e => startMoveLeaf(e, leaf));
+  leaf.addEventListener('touchstart', e => startMoveLeaf(e, leaf), { passive: false });
+
   page5.appendChild(leaf);
+}
+
+/* ── Move already-placed leaves ── */
+let moveLeaf = null, moveGhost2 = null, moveOX2 = 0, moveOY2 = 0;
+
+function startMoveLeaf(e, el) {
+  e.preventDefault(); e.stopPropagation();
+  const isTouch = e.type === 'touchstart';
+  const cx = isTouch ? e.touches[0].clientX : e.clientX;
+  const cy = isTouch ? e.touches[0].clientY : e.clientY;
+  const rect = el.getBoundingClientRect();
+  moveOX2 = cx - rect.left;
+  moveOY2 = cy - rect.top;
+
+  moveGhost2 = el.cloneNode(true);
+  Object.assign(moveGhost2.style, {
+    position:'fixed', width:rect.width+'px', height:rect.height+'px',
+    left:(cx-moveOX2)+'px', top:(cy-moveOY2)+'px',
+    zIndex:'2000', pointerEvents:'none',
+    opacity:'.85', transition:'none', margin:'0',
+  });
+  document.body.appendChild(moveGhost2);
+
+  el.style.opacity = '0.3';
+  moveLeaf = el;
+
+  if (isTouch) {
+    document.addEventListener('touchmove', onMoveLeaf, { passive: false });
+    document.addEventListener('touchend',  onMoveLeafEnd);
+  } else {
+    document.addEventListener('mousemove', onMoveLeaf);
+    document.addEventListener('mouseup',   onMoveLeafEnd);
+  }
+}
+
+function onMoveLeaf(e) {
+  if (!moveGhost2) return;
+  e.preventDefault();
+  const isTouch = e.type === 'touchmove';
+  const cx = isTouch ? e.touches[0].clientX : e.clientX;
+  const cy = isTouch ? e.touches[0].clientY : e.clientY;
+  moveGhost2.style.left = (cx - moveOX2) + 'px';
+  moveGhost2.style.top  = (cy - moveOY2) + 'px';
+}
+
+function onMoveLeafEnd(e) {
+  if (!moveGhost2 || !moveLeaf) return;
+  document.removeEventListener('mousemove', onMoveLeaf);
+  document.removeEventListener('mouseup',   onMoveLeafEnd);
+  document.removeEventListener('touchmove', onMoveLeaf);
+  document.removeEventListener('touchend',  onMoveLeafEnd);
+
+  const isTouch = e.type === 'touchend';
+  const cx = isTouch ? e.changedTouches[0].clientX : e.clientX;
+  const cy = isTouch ? e.changedTouches[0].clientY : e.clientY;
+
+  const page5 = document.getElementById('page5');
+  const pr = page5.getBoundingClientRect();
+  moveLeaf.style.left    = (cx - pr.left - moveOX2) + 'px';
+  moveLeaf.style.top     = (cy - pr.top  - moveOY2) + 'px';
+  moveLeaf.style.opacity = '1';
+
+  moveGhost2.remove();
+  moveGhost2 = null; moveLeaf = null;
 }
 
 /* ════════════════════════════════
