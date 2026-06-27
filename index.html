@@ -180,7 +180,7 @@
       cursor:grab;
       display:flex; align-items:center; justify-content:center;
       text-align:center;
-      font-size:7px; font-weight:600; line-height:1.15;
+      font-size:7px; font-weight:600; line-height:1.2;
       color:rgba(30,10,40,.78);
       box-shadow: none;
       overflow:hidden;
@@ -378,8 +378,8 @@
     }
     .ground-leaf img {
       position:absolute;
-      width:88%; height:88%;
-      inset:6%;
+      width:80%; height:80%;
+      inset:10%;
       object-fit:contain;
     }
     .ground-leaf .lf-text {
@@ -407,8 +407,8 @@
     }
     .placed-leaf img {
       position:absolute;
-      width:88%; height:88%;
-      inset:6%;
+      width:80%; height:80%;
+      inset:10%;
       object-fit:contain;
     }
     .placed-leaf .lf-text {
@@ -571,7 +571,7 @@
       .form-header h1 { font-size:2.8rem; }
       .form-header p  { font-size:.92rem; }
       #stickersGrid   { grid-template-columns:repeat(3,130px); gap:14px; }
-      .sticker        { width:130px; height:130px; padding:26px 10px 10px; }
+      .sticker        { width:130px; height:130px; padding:26px 10px 10px; font-size:11px; }
     }
 
     /* ══ Desktop (≥860px) ══ */
@@ -919,9 +919,9 @@ function fitText(el) {
   if (!el.clientHeight || !el.clientWidth) return;
   el.style.wordBreak = 'break-word';
   el.style.overflowWrap = 'break-word';
-  el.style.lineHeight = '1.15';
-  /* desktop: 11px start; mobile: 7px start */
-  let fs = window.innerWidth >= 860 ? 11 : 7;
+  el.style.lineHeight = '1.2';
+  /* start from CSS-defined size (7px mobile / 11px desktop), only shrink if overflow */
+  let fs = parseFloat(getComputedStyle(el).fontSize) || 7;
   el.style.fontSize = fs + 'px';
   while (el.scrollHeight > el.clientHeight && fs > 3) {
     fs -= 0.5;
