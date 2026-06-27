@@ -396,13 +396,15 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf — visually identical to ground-leaf, draggable to reposition */
+    /* Placed leaf — same look as ground leaf */
     .placed-leaf {
       position:absolute;
       width:115px; height:78px;
       display:flex; align-items:center; justify-content:center;
       cursor:grab; touch-action:none; user-select:none;
-      z-index:20; overflow:hidden;
+      z-index:20; overflow:hidden; border-radius:4px;
+      /* match page5 gradient so transparent areas don't show tree */
+      background:rgba(200,232,200,0.55);
     }
     .placed-leaf img {
       position:absolute;
@@ -1283,9 +1285,8 @@ function placeLeaf(text, imgSrc, zoneRect, dropX, dropY) {
 
   const leaf = document.createElement('div');
   leaf.className = 'placed-leaf';
-  leaf.style.left      = relX + 'px';
-  leaf.style.top       = relY + 'px';
-  leaf.style.transform = `rotate(${rot}deg)`;
+  leaf.style.left = relX + 'px';
+  leaf.style.top  = relY + 'px';
   leaf.innerHTML = `<img src="${imgSrc}" alt=""><span class="lf-text">${text}</span>`;
 
   /* Allow repositioning placed leaves */
