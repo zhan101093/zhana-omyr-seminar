@@ -396,15 +396,13 @@
     .ground-leaf:hover { transform:scale(1.12) rotate(4deg); }
     .ground-leaf.gone  { visibility:hidden; }
 
-    /* Placed leaf — same look as ground leaf */
+    /* Placed leaf — identical to ground-leaf, no bg, no border, no radius */
     .placed-leaf {
       position:absolute;
       width:115px; height:78px;
       display:flex; align-items:center; justify-content:center;
       cursor:grab; touch-action:none; user-select:none;
-      z-index:20; overflow:hidden; border-radius:4px;
-      /* match page5 gradient so transparent areas don't show tree */
-      background:rgba(200,232,200,0.55);
+      z-index:20; overflow:hidden;
     }
     .placed-leaf img {
       position:absolute;
